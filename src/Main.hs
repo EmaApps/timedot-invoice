@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE QuasiQuotes #-}
 
 {-# HLINT ignore "Use camelCase" #-}
 
@@ -6,10 +7,17 @@ module Main where
 
 import Ema
 import Generics.SOP qualified as SOP
+import NeatInterpolation
 import Text.Blaze.Html.Renderer.Utf8 qualified as RU
 import Text.Blaze.Html5 ((!))
 import Text.Blaze.Html5 qualified as H
 import Text.Blaze.Html5.Attributes qualified as A
+
+datum :: Text
+datum =
+  [text|
+    2022-05-04 +1
+  |]
 
 data Route = Route_Index
   deriving stock
@@ -35,7 +43,7 @@ instance CanRender Route where
         H.body $ do
           H.div ! A.class_ "container mx-auto mt-8 p-2" $ do
             H.h1 ! A.class_ "text-3xl font-bold" $ "Amb"
-            "todo"
+            H.pre $ H.toHtml datum
     where
       _routeElem r' = do
         H.a ! A.class_ "text-red-500 hover:underline" ! _routeHref r'
