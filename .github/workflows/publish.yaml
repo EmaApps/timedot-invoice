@@ -17,12 +17,11 @@ jobs:
             experimental-features = nix-command flakes
       - name: Build sources 🔧
         run: |
-          nix build
+          nix build -j 4
       - name: Generate HTML 🔧
         run: |
           mkdir ./output
           export TARGET=$(pwd)/output
-          nix develop -c tailwind-run -o content/static/tailwind.css 'src/**/*.hs' 
           cd ./content
           ../result/bin/amb gen $TARGET
       - name: Deploy to gh-pages 🚀
