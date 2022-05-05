@@ -17,7 +17,6 @@
       (system:
         let
           name = "amb";
-          overlays = [ ];
           pkgs = nixpkgs.legacyPackages.${system};
           inherit (pkgs.lib.trivial) pipe flip;
           inherit (pkgs.lib.lists) optionals;
