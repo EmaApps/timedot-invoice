@@ -16,7 +16,7 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let
-          name = "ema-template";
+          name = "amb";
           overlays = [ ];
           pkgs = nixpkgs.legacyPackages.${system};
           inherit (pkgs.lib.trivial) pipe flip;
