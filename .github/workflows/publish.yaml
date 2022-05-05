@@ -17,13 +17,12 @@ jobs:
             experimental-features = nix-command flakes
       - name: Build sources 🔧
         run: |
-          nix build -j 4
+          nix build -j 4 -L
       - name: Generate HTML 🔧
         run: |
           mkdir ./output
           export TARGET=$(pwd)/output
-          cd ./content
-          ../result/bin/amb gen $TARGET
+          ./result/bin/amb gen $TARGET
       - name: Deploy to gh-pages 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
