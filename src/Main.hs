@@ -1,11 +1,11 @@
 module Main where
 
-import Ema
-import Ema.Multi
+import Ema (runSite)
+import Ema.Multi (MultiRoute)
 import Generics.SOP
-import Site.MarkdownSite
-import Site.StaticSite
+import Site.Amb (Route)
+import Site.StaticSite (StaticPath)
 
 main :: IO ()
 main =
-  void $ runSite @(MultiRoute '[MarkdownRoute, StaticPath]) (I () :* I () :* Nil)
+  void $ runSite @(MultiRoute '[Route, StaticPath]) (I () :* I () :* Nil)

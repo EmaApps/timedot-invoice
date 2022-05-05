@@ -106,7 +106,7 @@ executable amb
 
   main-is:            Main.hs
   other-modules:
-    Site.MarkdownSite
+    Site.Amb
     Site.StaticSite
 
   hs-source-dirs:     src
