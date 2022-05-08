@@ -1,13 +1,11 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-{-# HLINT ignore "Use camelCase" #-}
-
 module Main where
 
 import Ema
 import Generics.SOP qualified as SOP
-import NeatInterpolation
+import NeatInterpolation (text)
 import Text.Blaze.Html.Renderer.Utf8 qualified as RU
 import Text.Blaze.Html5 ((!))
 import Text.Blaze.Html5 qualified as H
