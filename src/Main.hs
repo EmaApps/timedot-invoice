@@ -2,8 +2,12 @@
 
 module Main where
 
+import Data.Some
 import Ema
+import Ema.CLI qualified
 import Generics.SOP qualified as SOP
+import Main.Utf8 (withUtf8)
+import Options.Applicative
 import Text.Blaze.Html.Renderer.Utf8 qualified as RU
 import Text.Blaze.Html5 ((!))
 import Text.Blaze.Html5 qualified as H
@@ -40,5 +44,28 @@ instance CanRender Route where
         A.href (fromString . toString $ Ema.routeUrl enc m r')
 
 main :: IO ()
-main =
-  void $ runSite @Route ()
+main = do
+  withUtf8 $ do
+    timedotFile <- execParser parseCli
+    void $ runSiteWithCli @Route emaCli ()
+  where
+    -- TODO: Allow setting port
+    emaCli = Ema.CLI.Cli (Some $ Ema.CLI.Run ("127.0.0.1", 9092)) False
+
+cliParser :: Parser FilePath
+cliParser = do
+  argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
+
+parseCli :: ParserInfo FilePath
+parseCli =
+  info
+    (versionOption <*> cliParser <**> helper)
+    ( fullDesc
+        <> progDesc "timedot-invoice: TODO"
+        <> header "timedot-invoice"
+    )
+  where
+    versionOption =
+      infoOption
+        "0.1"
+        (long "version" <> help "Show version")

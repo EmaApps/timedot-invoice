@@ -32,7 +32,7 @@ executable timedot-invoice
     , data-default
     , dependent-sum
     , directory
-    , ema                 >=0.7
+    , ema                   >=0.7
     , filepath
     , generics-sop
     , hledger
@@ -40,6 +40,7 @@ executable timedot-invoice
     , monad-logger
     , neat-interpolation
     , optics-core
+    , optparse-applicative
     , pandoc
     , pandoc-types
     , path-tree
@@ -50,10 +51,11 @@ executable timedot-invoice
     , tagged
     , text
     , time
-    , unionmount          >=0.2
+    , unionmount            >=0.2
     , unliftio
     , url-slug
     , uuid
+    , with-utf8
 
   mixins:
     base hiding (Prelude),
