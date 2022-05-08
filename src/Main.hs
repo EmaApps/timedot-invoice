@@ -47,6 +47,7 @@ main :: IO ()
 main = do
   withUtf8 $ do
     timedotFile <- execParser parseCli
+    print timedotFile
     void $ runSiteWithCli @Route emaCli ()
   where
     -- TODO: Allow setting port
