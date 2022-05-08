@@ -4,10 +4,12 @@
 module Main where
 
 import Data.Default (def)
-import Data.Some
+import Data.Some (Some (Some))
 import Ema
 import Ema.CLI qualified
 import Generics.SOP qualified as SOP
+import Heist qualified as H
+import Heist.Interpreted qualified as HI
 import Main.Utf8 (withUtf8)
 import Options.Applicative
 import TI.Heist qualified as H
@@ -24,17 +26,25 @@ data Model = Model
   , modelTemplateState :: H.TemplateState
   }
 
+renderTpl :: Model -> H.Splices (HI.Splice Identity) -> LByteString
+renderTpl (Model _ tmplSt) args =
+  -- TODO: don't hardcode template name
+  either error id $ H.renderHeistTemplate "./example/hours.timedot" args tmplSt
+
 instance HasModel Route where
   type ModelInput Route = FilePath
   modelDynamic _ _ fp = do
     let tmplFile = fp <> ".tpl"
     tmplContents <- readFileBS tmplFile
     let tmplSt = H.addTemplateFile tmplFile tmplFile tmplContents def
+    -- TODO: Dynamic
     pure $ pure $ Model fp tmplSt
 
 instance CanRender Route where
-  routeAsset enc m@(Model _timedotFile tmplSt) Route_Index =
-    Ema.AssetGenerated Ema.Html . either error id $ H.renderHeistTemplate "./example/hours.timedot" mempty tmplSt
+  routeAsset _ m Route_Index =
+    Ema.AssetGenerated Ema.Html $ renderTpl m args
+    where
+      args = mempty -- TODO
 
 main :: IO ()
 main = do

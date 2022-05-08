@@ -2,5 +2,8 @@
     "editor.formatOnType": true,
     "editor.formatOnSave": true,
     "haskell.formattingProvider": "fourmolu",
+    "files.associations": {
+        "*.tpl": "html"
+    },
     "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"
 }
