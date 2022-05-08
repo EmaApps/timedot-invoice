@@ -29,7 +29,6 @@
             haskell-language-server
             fourmolu
             pkgs.nixpkgs-fmt
-            tailwind-haskell
             pkgs.treefmt
           ];
           project = returnShellEnv:

@@ -87,7 +87,7 @@ executable timedot-invoice
     GeneralisedNewtypeDeriving
     ImportQualifiedPost
     KindSignatures
-    Ltimedot-invoicedaCase
+    LambdaCase
     MultiParamTypeClasses
     MultiWayIf
     NumericUnderscores
