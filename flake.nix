@@ -7,10 +7,13 @@
     flake-utils.follows = "ema/flake-utils";
     flake-compat.follows = "ema/flake-compat";
 
-    pathtree.url = "github:srid/pathtree";
-    pathtree.inputs.nixpkgs.follows = "ema/nixpkgs";
     unionmount.url = "github:srid/unionmount/master";
     unionmount.inputs.nixpkgs.follows = "ema/nixpkgs";
+
+    heist = {
+      url = "github:srid/heist/emanote-release--ghc9";
+      flake = false;
+    };
   };
   outputs = inputs@{ self, nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem
@@ -39,8 +42,8 @@
               overrides = self: super: with pkgs.haskell.lib; {
                 ema = inputs.ema.defaultPackage.${system};
                 tailwind = tailwind-haskell;
-                path-tree = self.callCabal2nix "path-tree" inputs.pathtree { };
                 unionmount = self.callCabal2nix "unionmount" inputs.unionmount { };
+                heist-emanote = doJailbreak (dontCheck (self.callCabal2nix "heist-emanote" inputs.heist { }));
               };
               modifier = drv:
                 let inherit (pkgs.haskell.lib) addBuildTools;

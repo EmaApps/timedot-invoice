@@ -35,9 +35,11 @@ executable timedot-invoice
     , ema                   >=0.7
     , filepath
     , generics-sop
+    , heist-emanote
     , hledger
     , hledger-lib
     , monad-logger
+    , mtl
     , neat-interpolation
     , optics-core
     , optparse-applicative
@@ -56,6 +58,7 @@ executable timedot-invoice
     , url-slug
     , uuid
     , with-utf8
+    , xmlhtml
 
   mixins:
     base hiding (Prelude),
@@ -109,5 +112,6 @@ executable timedot-invoice
     ViewPatterns
 
   main-is:            Main.hs
+  other-modules:      TI.Heist
   hs-source-dirs:     src
   default-language:   Haskell2010
