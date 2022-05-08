@@ -1,54 +1,47 @@
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Main where
 
+import Data.Default (def)
 import Data.Some
 import Ema
 import Ema.CLI qualified
 import Generics.SOP qualified as SOP
 import Main.Utf8 (withUtf8)
 import Options.Applicative
-import Text.Blaze.Html.Renderer.Utf8 qualified as RU
-import Text.Blaze.Html5 ((!))
-import Text.Blaze.Html5 qualified as H
-import Text.Blaze.Html5.Attributes qualified as A
+import TI.Heist qualified as H
 
 data Route = Route_Index
   deriving stock
     (Show, Eq, Ord, Generic)
   deriving anyclass
-    (SOP.Generic, SOP.HasDatatypeInfo, HasModel, IsRoute)
+    (SOP.Generic, SOP.HasDatatypeInfo)
+  deriving (IsRoute) via (SingleModelRoute Model Route)
+
+data Model = Model
+  { modelTimedotFile :: FilePath
+  , modelTemplateState :: H.TemplateState
+  }
+
+instance HasModel Route where
+  type ModelInput Route = FilePath
+  modelDynamic _ _ fp = do
+    let tmplFile = fp <> ".tpl"
+    tmplContents <- readFileBS tmplFile
+    let tmplSt = H.addTemplateFile tmplFile tmplFile tmplContents def
+    pure $ pure $ Model fp tmplSt
 
 instance CanRender Route where
-  routeAsset enc m Route_Index =
-    Ema.AssetGenerated Ema.Html . RU.renderHtml $ do
-      H.docType
-      H.html ! A.lang "en" $ do
-        H.head $ do
-          H.meta ! A.charset "UTF-8"
-          -- This makes the site mobile friendly by default.
-          H.meta ! A.name "viewport" ! A.content "width=device-width, initial-scale=1"
-          H.link
-            ! A.href "https://unpkg.com/tailwindcss@2/dist/tailwind.min.css"
-            ! A.rel "stylesheet"
-            ! A.type_ "text/css"
-          H.title "Amb"
-          H.base ! A.href "/"
-        H.body $ do
-          H.div ! A.class_ "container mx-auto mt-8 p-2" $ do
-            H.h1 ! A.class_ "text-3xl font-bold" $ "timedot-invoice"
-    where
-      _routeElem r' = do
-        H.a ! A.class_ "text-red-500 hover:underline" ! _routeHref r'
-      _routeHref r' =
-        A.href (fromString . toString $ Ema.routeUrl enc m r')
+  routeAsset enc m@(Model _timedotFile tmplSt) Route_Index =
+    Ema.AssetGenerated Ema.Html . either error id $ H.renderHeistTemplate "./example/hours.timedot" mempty tmplSt
 
 main :: IO ()
 main = do
   withUtf8 $ do
     timedotFile <- execParser parseCli
     print timedotFile
-    void $ runSiteWithCli @Route emaCli ()
+    void $ runSiteWithCli @Route emaCli timedotFile
   where
     -- TODO: Allow setting port
     emaCli = Ema.CLI.Cli (Some $ Ema.CLI.Run ("127.0.0.1", 9092)) False
