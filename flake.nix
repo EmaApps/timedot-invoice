@@ -16,7 +16,7 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let
-          name = "amb";
+          name = "timedot-invoice";
           pkgs = nixpkgs.legacyPackages.${system};
           inherit (pkgs.lib.trivial) pipe flip;
           inherit (pkgs.lib.lists) optionals;
