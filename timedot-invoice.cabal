@@ -34,22 +34,24 @@ executable timedot-invoice
     , directory
     , ema                 >=0.7
     , filepath
+    , generics-sop
+    , hledger
+    , hledger-lib
     , monad-logger
     , neat-interpolation
+    , optics-core
     , pandoc
     , pandoc-types
     , path-tree
     , relude
     , shower
     , some
+    , sop-core
     , tagged
     , text
     , time
-    , unionmount >= 0.2
+    , unionmount          >=0.2
     , unliftio
-    , optics-core
-    , generics-sop
-    , sop-core
     , url-slug
     , uuid
 
@@ -105,6 +107,5 @@ executable timedot-invoice
     ViewPatterns
 
   main-is:            Main.hs
-
   hs-source-dirs:     src
   default-language:   Haskell2010
