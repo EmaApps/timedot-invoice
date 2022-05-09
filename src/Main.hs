@@ -19,7 +19,9 @@ data Route = Route_Index
     (Show, Eq, Ord, Generic)
   deriving anyclass
     (SOP.Generic, SOP.HasDatatypeInfo)
-  deriving (IsRoute) via (SingleModelRoute Model Route)
+  deriving
+    (IsRoute)
+    via (SingleModelRoute Model Route)
 
 data Model = Model
   { modelTimedotFile :: FilePath

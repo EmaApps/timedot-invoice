@@ -25,4 +25,4 @@ newtype Hours = Hours {unHours :: Word}
 type WeekOfYear = Int
 
 extractHours :: HL.Journal -> Map WeekOfYear (Map Client Hours)
-extractHours = undefined
+extractHours = mempty
