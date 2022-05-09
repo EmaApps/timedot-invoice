@@ -4,6 +4,7 @@
 module Main where
 
 import Data.Default (def)
+import Data.Map.Syntax
 import Data.Some (Some (Some))
 import Ema
 import Ema.CLI qualified
@@ -12,6 +13,7 @@ import Heist qualified as H
 import Heist.Interpreted qualified as HI
 import Main.Utf8 (withUtf8)
 import Options.Applicative
+import TI.HLedger
 import TI.Heist qualified as H
 
 data Route = Route_Index
@@ -26,10 +28,11 @@ data Route = Route_Index
 data Model = Model
   { modelTimedotFile :: FilePath
   , modelTemplateState :: H.TemplateState
+  , modelHours :: TimedotEntries
   }
 
 renderTpl :: Model -> H.Splices (HI.Splice Identity) -> LByteString
-renderTpl (Model _ tmplSt) args =
+renderTpl (Model _ tmplSt _) args =
   -- TODO: don't hardcode template name
   either error id $ H.renderHeistTemplate "./example/hours.timedot" args tmplSt
 
@@ -39,14 +42,15 @@ instance HasModel Route where
     let tmplFile = fp <> ".tpl"
     tmplContents <- readFileBS tmplFile
     let tmplSt = H.addTemplateFile tmplFile tmplFile tmplContents def
+    hrs <- liftIO $ parseTimedot fp
     -- TODO: Dynamic
-    pure $ pure $ Model fp tmplSt
+    pure $ pure $ Model fp tmplSt hrs
 
 instance CanRender Route where
   routeAsset _ m Route_Index =
-    Ema.AssetGenerated Ema.Html $ renderTpl m args
-    where
-      args = mempty -- TODO
+    Ema.AssetGenerated Ema.Html $
+      renderTpl m $ do
+        "invoice:hours" ## HI.textSplice (show $ modelHours m)
 
 main :: IO ()
 main = do
@@ -58,6 +62,8 @@ main = do
     -- TODO: Allow setting port
     emaCli = Ema.CLI.Cli (Some $ Ema.CLI.Run ("127.0.0.1", 9092)) False
 
+-- TODO: Add more CLI params
+-- - Duration (default: 2 weeks)
 cliParser :: Parser FilePath
 cliParser = do
   argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")

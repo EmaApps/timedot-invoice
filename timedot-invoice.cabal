@@ -36,6 +36,7 @@ executable timedot-invoice
     , heist-emanote
     , hledger
     , hledger-lib
+    , map-syntax
     , monad-logger
     , mtl
     , neat-interpolation

@@ -19,6 +19,7 @@
 
 <body class="overflow-y-scroll">
   <p class="text-red-500 text-3xl">Hello</p>
+  <pre class="overflow-y-scroll"><invoice:hours /></pre>
 </body>
 
 </html>
