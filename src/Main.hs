@@ -4,6 +4,7 @@
 module Main where
 
 import Data.Default (def)
+import Data.Map.Strict qualified as Map
 import Data.Map.Syntax
 import Data.Some (Some (Some))
 import Ema
@@ -50,7 +51,11 @@ instance CanRender Route where
   routeAsset _ m Route_Index =
     Ema.AssetGenerated Ema.Html $
       renderTpl m $ do
-        "invoice:hours" ## HI.textSplice (show $ modelHours m)
+        "invoice:hours" ## H.listSplice (modelHours m) "hour" $ \(day, clients) -> do
+          "hour:day" ## HI.textSplice (show day)
+          "hour:clients" ## H.listSplice (Map.toList clients) "client" $ \(client, hours) -> do
+            "client:name" ## HI.textSplice (show client)
+            "client:hours" ## HI.textSplice (show hours)
 
 main :: IO ()
 main = do

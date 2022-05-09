@@ -8,6 +8,9 @@ module TI.Heist (
   addTemplateFile,
   removeTemplateFile,
   renderHeistTemplate,
+
+  -- * Splice utilities
+  listSplice,
 ) where
 
 import Control.Monad.Except (MonadError (throwError), runExcept)
@@ -15,6 +18,7 @@ import Data.ByteString.Builder (toLazyByteString)
 import Data.Default (Default (..))
 import Data.HashMap.Strict qualified as HM
 import Data.Map.Strict qualified as Map
+import Data.Map.Syntax
 import Data.Text qualified as T
 import GHC.IO.Unsafe (unsafePerformIO)
 import Heist qualified as H
@@ -130,3 +134,16 @@ assignError =
 clearError :: TemplateName -> TemplateErrors -> TemplateErrors
 clearError =
   Map.delete
+
+-- Splicing utilities
+-- ------------------
+
+-- | A splice that applies a non-empty list
+listSplice :: [a] -> Text -> (a -> H.Splices (HI.Splice Identity)) -> HI.Splice Identity
+listSplice xs childTag childSplice = do
+  if null xs
+    then pure mempty
+    else HI.runChildrenWith $ do
+      childTag
+        ## (HI.runChildrenWith . childSplice)
+          `foldMapM` xs

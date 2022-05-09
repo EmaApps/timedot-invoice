@@ -36,6 +36,7 @@ newtype Hours = Hours {unHours :: Integer}
 -- Available in latest version of `time` which we don't have
 type WeekOfYear = Int
 
+-- TODO: Sane error handling (display in HTML)
 parseTransaction :: HasCallStack => HL.Transaction -> (Day, Map Client Hours)
 parseTransaction (HL.Transaction {..}) =
   ( tdate
