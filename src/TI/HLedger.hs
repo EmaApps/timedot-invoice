@@ -5,6 +5,7 @@ module TI.HLedger (TimedotEntries, parseTimedot) where
 
 import Data.Map.Strict qualified as Map
 import Data.Time.Calendar
+import Data.Traversable (for)
 import Hledger qualified
 import Hledger.Data.Types qualified as HL
 import Hledger.Read.TimedotReader qualified as TimedotReader
@@ -12,11 +13,14 @@ import Relude.Extra.Lens ((.~))
 
 type TimedotEntries = [(Day, Map Client Hours)]
 
-parseTimedot :: FilePath -> IO TimedotEntries
+type Error = Text
+
+parseTimedot :: FilePath -> IO ([Error], TimedotEntries)
 parseTimedot fp = do
   s <- readFileText fp
   jrnl <- readTimedot s
-  pure $ parseTransaction <$> HL.jtxns jrnl
+  let res = parseTransaction <$> HL.jtxns jrnl
+  pure (lefts res, rights res)
 
 -- | Like `readJournal'` but for timedot files
 readTimedot :: Text -> IO HL.Journal
@@ -37,18 +41,21 @@ newtype Hours = Hours {unHours :: Integer}
 type WeekOfYear = Int
 
 -- TODO: Sane error handling (display in HTML)
-parseTransaction :: HasCallStack => HL.Transaction -> (Day, Map Client Hours)
-parseTransaction (HL.Transaction {..}) =
-  ( tdate
-  , Map.fromListWith (\_ _ -> error "dups") $
-      tpostings <&> \(HL.Posting {..}) ->
-        (fromString . toString $ paccount, parseHours pamount)
-  )
+parseTransaction :: HL.Transaction -> Either Text (Day, Map Client Hours)
+parseTransaction (HL.Transaction {..}) = do
+  hours <- fmap (Map.fromListWith (\_ _ -> error "dups")) $
+    for tpostings $ \(HL.Posting {..}) -> do
+      hs <- parseHours pamount
+      pure (fromString . toString $ paccount, hs)
+  pure (tdate, hours)
   where
-    parseHours :: HL.MixedAmount -> Hours
-    parseHours amt = fromMaybe (error "bad hours") $ do
+    parseHours :: HL.MixedAmount -> Either Error Hours
+    parseHours amt = do
       HL.Mixed (toList -> [HL.Amount {..}]) <- pure amt
       let r :: Rational = toRational aquantity
-      guard $ denominator r == 1
-      guard $ numerator r > 0
-      pure $ Hours $ numerator r
+      if denominator r == 1
+        then
+          if numerator r > 0
+            then pure $ Hours $ numerator r
+            else Left "Negative hours"
+        else Left "Non-integer hours"

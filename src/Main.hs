@@ -30,12 +30,15 @@ data Model = Model
   { modelTimedotFile :: FilePath
   , modelTemplateState :: H.TemplateState
   , modelHours :: TimedotEntries
+  , modelErrors :: [Text]
   }
 
 renderTpl :: Model -> H.Splices (HI.Splice Identity) -> LByteString
-renderTpl (Model _ tmplSt _) args =
+renderTpl (Model _ tmplSt _ _) args =
   -- TODO: don't hardcode template name
-  either error id $ H.renderHeistTemplate "./example/hours.timedot" args tmplSt
+  either errorHtml id $ H.renderHeistTemplate "./example/hours.timedot" args tmplSt
+  where
+    errorHtml err = "<span style=\"text-color: red\">" <> encodeUtf8 err <> "</span>"
 
 instance HasModel Route where
   type ModelInput Route = FilePath
@@ -43,14 +46,16 @@ instance HasModel Route where
     let tmplFile = fp <> ".tpl"
     tmplContents <- readFileBS tmplFile
     let tmplSt = H.addTemplateFile tmplFile tmplFile tmplContents def
-    hrs <- liftIO $ parseTimedot fp
+    (errs, hrs) <- liftIO $ parseTimedot fp
     -- TODO: Dynamic
-    pure $ pure $ Model fp tmplSt hrs
+    pure $ pure $ Model fp tmplSt hrs errs
 
 instance CanRender Route where
   routeAsset _ m Route_Index =
     Ema.AssetGenerated Ema.Html $
       renderTpl m $ do
+        "invoice:errors" ## H.listSplice (modelErrors m) "error" $ \err -> do
+          "error:err" ## HI.textSplice err
         "invoice:hours" ## H.listSplice (modelHours m) "hour" $ \(day, clients) -> do
           "hour:day" ## HI.textSplice (show day)
           "hour:clients" ## H.listSplice (Map.toList clients) "client" $ \(client, hours) -> do

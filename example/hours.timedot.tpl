@@ -20,6 +20,13 @@
 <body class="overflow-y-scroll">
   <p class="text-red-500 text-3xl">Hello</p>
   <pre class="overflow-y-scroll"><invoice:hours /></pre>
+  <invoice:errors>
+    <error>
+      <li class="text-red-500">
+        <error:err />
+      </li>
+    </error>
+  </invoice:errors>
   <invoice:hours>
     <hour>
       <em>
