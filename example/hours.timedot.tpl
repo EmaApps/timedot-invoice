@@ -19,36 +19,37 @@
 
 <body class="overflow-y-scroll">
   <p class="text-red-500 text-3xl">Hello</p>
-  <pre class="overflow-y-scroll"><invoice:hours /></pre>
-  <invoice:errors>
-    <error>
-      <li class="text-red-500">
-        <error:err />
-      </li>
-    </error>
-  </invoice:errors>
-  <invoice:hours>
-    <hour>
-      <em>
-        <hour:day />
-      </em>
-      -
-      <hour:clients>
-        <client>
-          <li>
-            <b>
-              <client:name />
-            </b>
-            -
-            <tt>
-              <client:hours />
-            </tt>
-          </li>
-        </client>
+  <div class="container mx-auto max-w-screen-lg">
+    <invoice:errors>
+      <error>
+        <li class="text-red-500">
+          <error:err />
+        </li>
+      </error>
+    </invoice:errors>
+    <invoice:hours>
+      <hour>
+        <em>
+          <hour:day />
+        </em>
+        -
+        <hour:clients>
+          <client>
+            <li>
+              <b>
+                <client:name />
+              </b>
+              -
+              <tt>
+                <client:hours />
+              </tt>
+            </li>
+          </client>
 
-      </hour:clients>
-    </hour>
-  </invoice:hours>
+        </hour:clients>
+      </hour>
+    </invoice:hours>
+  </div>
 </body>
 
 </html>

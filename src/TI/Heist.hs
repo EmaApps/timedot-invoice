@@ -4,6 +4,7 @@
 
 module TI.Heist (
   TemplateState,
+  emptyTemplateState,
   TemplateName,
   addTemplateFile,
   removeTemplateFile,
