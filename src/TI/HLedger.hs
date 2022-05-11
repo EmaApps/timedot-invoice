@@ -1,15 +1,14 @@
-{-# HLINT ignore "Use ?~" #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module TI.HLedger (TimedotEntries, parseTimedot) where
 
+import Control.Lens.Operators ((?~))
 import Data.Map.Strict qualified as Map
 import Data.Time.Calendar
 import Data.Traversable (for)
 import Hledger qualified
 import Hledger.Data.Types qualified as HL
 import Hledger.Read.TimedotReader qualified as TimedotReader
-import Relude.Extra.Lens ((.~))
 
 type TimedotEntries = [(Day, Map Client Hours)]
 
@@ -29,7 +28,7 @@ readTimedot t = Hledger.readJournal opts Nothing t >>= either Hledger.error' ret
     sFormat = Hledger.rFormat (TimedotReader.reader @IO)
     opts =
       Hledger.definputopts
-        & Hledger.mformat .~ Just sFormat
+        & Hledger.mformat ?~ sFormat
 
 newtype Client = Client {unClient :: Text}
   deriving newtype (Show, Eq, Ord, IsString)

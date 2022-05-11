@@ -32,10 +32,12 @@ executable timedot-invoice
     , directory
     , ema                   >=0.7
     , filepath
+    , filepattern
     , generics-sop
     , heist-emanote
     , hledger
     , hledger-lib
+    , lens
     , map-syntax
     , monad-logger
     , mtl

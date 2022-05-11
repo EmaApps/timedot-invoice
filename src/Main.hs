@@ -1,4 +1,6 @@
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Main where
@@ -16,8 +18,9 @@ import Main.Utf8 (withUtf8)
 import Options.Applicative
 import System.Directory (makeAbsolute)
 import System.FilePath (takeDirectory, takeFileName, (</>))
+import System.FilePattern (FilePattern)
 import System.UnionMount qualified as UM
-import TI.HLedger
+import TI.HLedger qualified as HLedger
 import TI.Heist qualified as H
 
 data Route = Route_Index
@@ -31,7 +34,7 @@ data Route = Route_Index
 
 data Model = Model
   { modelTemplateState :: H.TemplateState
-  , modelHours :: TimedotEntries
+  , modelHours :: HLedger.TimedotEntries
   , modelErrors :: [Text]
   }
 
@@ -46,37 +49,39 @@ data FileType
   | FileType_Yaml
   deriving stock (Eq, Show, Ord)
 
-instance HasModel Route where
-  type ModelInput Route = FilePath
-  modelDynamic _ _ timedotFile = do
+inputPatterns :: CLI -> [(FileType, FilePattern)]
+inputPatterns CLI {cliTimedotFile} =
+  [ (FileType_Timedot, cliTimedotFile)
+  , (FileType_Tpl, cliTimedotFile <> ".tpl")
+  , (FileType_Yaml, cliTimedotFile <> ".tpl.yaml")
+  ]
+
+instance EmaSite Route where
+  type SiteArg Route = CLI
+  siteInput _ _ input@CLI {..} = do
     model0 <- liftIO emptyModel
-    baseDir <- liftIO $ makeAbsolute $ takeDirectory timedotFile
-    let tplFile = timedotFile <> ".tpl"
-        pats = [(FileType_Timedot, takeFileName timedotFile), (FileType_Tpl, takeFileName tplFile)]
     fmap Dynamic $
-      UM.mount baseDir pats [".*"] model0 $
+      UM.mount cliBaseDir (inputPatterns input) [".*"] model0 $
         \tag fp act -> case tag of
           FileType_Timedot -> case act of
             UM.Refresh _ () -> do
-              (errs, hrs) <- liftIO $ parseTimedot $ baseDir </> fp
+              (errs, hrs) <- liftIO $ HLedger.parseTimedot $ cliBaseDir </> fp
               pure $ \m -> m {modelHours = hrs, modelErrors = errs}
             UM.Delete -> do
               putStrLn $ "WARNING: file gone: " <> fp
               pure $ \m -> m {modelHours = mempty, modelErrors = ["No timedot file available"]}
           FileType_Tpl -> case act of
             UM.Refresh _ () -> do
-              s <- readFileBS $ baseDir </> fp
+              s <- readFileBS $ cliBaseDir </> fp
               let tmplSt = H.addTemplateFile fp fp s def
               pure $ \m -> m {modelTemplateState = tmplSt}
             UM.Delete -> do
               putStrLn $ "WARNING: file gone: " <> fp
               pure $ \m -> m {modelTemplateState = H.removeTemplateFile fp (modelTemplateState m)}
           FileType_Yaml -> do
-            liftIO $ putStrLn "Not implemented"
+            liftIO $ putStrLn $ "TODO: YAML handling " <> fp
             pure id
-
-instance CanRender Route where
-  routeAsset _ m Route_Index =
+  siteOutput _ m Route_Index =
     Ema.AssetGenerated Ema.Html . renderTpl m $ do
       "invoice:errors" ## H.listSplice (modelErrors m) "error" $ \err -> do
         "error:err" ## HI.textSplice err
@@ -96,29 +101,47 @@ instance CanRender Route where
 main :: IO ()
 main = do
   withUtf8 $ do
-    timedotFile <- execParser parseCli
-    putStrLn $ "Running on timedot file: " <> timedotFile
-    void $ runSiteWithCli @Route emaCli timedotFile
+    cli <- parseCli
+    putStrLn $ "Running with args: " <> show cli
+    void $ runSiteWithCli @Route emaCli cli
   where
     -- TODO: Allow setting port
     emaCli = Ema.CLI.Cli (Some $ Ema.CLI.Run ("127.0.0.1", 9092)) False
 
--- TODO: Add more CLI params
--- - Duration (default: 2 weeks)
-cliParser :: Parser FilePath
-cliParser = do
-  argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
+data CLI = CLI
+  { -- | The base directory containing the timedot file. Ema will scan this.
+    cliBaseDir :: FilePath
+  , -- | Filename of the timedot file under the base directory
+    cliTimedotFile :: FilePath
+  }
+  deriving stock (Eq, Show)
 
-parseCli :: ParserInfo FilePath
+parseCli :: IO CLI
 parseCli =
-  info
-    (versionOption <*> cliParser <**> helper)
-    ( fullDesc
-        <> progDesc "timedot-invoice: TODO"
-        <> header "timedot-invoice"
-    )
+  mkCli =<< execParser cliParserInfo
   where
-    versionOption =
-      infoOption
-        "0.1"
-        (long "version" <> help "Show version")
+    mkCli :: FilePath -> IO CLI
+    mkCli fp = do
+      cliBaseDir <- makeAbsolute $ takeDirectory fp
+      let cliTimedotFile = takeFileName fp
+      pure $ CLI {..}
+
+    -- TODO: Add more CLI params
+    -- - Duration (default: 2 weeks)
+    cliParser :: Parser FilePath
+    cliParser = do
+      argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
+
+    cliParserInfo :: ParserInfo FilePath
+    cliParserInfo =
+      info
+        (versionOption <*> cliParser <**> helper)
+        ( fullDesc
+            <> progDesc "timedot-invoice: TODO"
+            <> header "timedot-invoice"
+        )
+      where
+        versionOption =
+          infoOption
+            "0.1"
+            (long "version" <> help "Show version")
