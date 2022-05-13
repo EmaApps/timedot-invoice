@@ -8,7 +8,7 @@ module Main where
 
 import Data.Default (def)
 import Data.Map.Strict qualified as Map
-import Data.Map.Syntax
+import Data.Map.Syntax ((##))
 import Data.Some (Some (Some))
 import Ema
 import Ema.CLI qualified
@@ -101,15 +101,22 @@ main :: IO ()
 main = withUtf8 $ do
   cli <- parseCli
   putStrLn $ "Running with args: " <> show cli
-  void $ runSiteWithCli @Route (cliEma cli) cli
+  runEmaLiveServer (Proxy @Route) (cliHost cli) (cliPort cli) cli
+  where
+    -- Like `runSiteWithCli` but only runs the live server, using given host
+    -- and port.
+    runEmaLiveServer (Proxy :: Proxy r) host port cli =
+      let emaCli = Ema.CLI.Cli (Some $ Ema.CLI.Run (host, port)) False
+       in void $ runSiteWithCli @r emaCli cli
 
 data CLI = CLI
   { -- | The base directory containing the timedot file. Ema will scan this.
     cliBaseDir :: FilePath
   , -- | Filename of the timedot file under the base directory
     cliTimedotFile :: FilePath
-  , -- | The Ema CLI settings to start the live server from.
-    cliEma :: Ema.CLI.Cli
+  , -- | Live server host and port
+    cliHost :: Ema.CLI.Host
+  , cliPort :: Ema.CLI.Port
   }
   deriving stock (Eq, Show)
 
@@ -121,9 +128,11 @@ parseCli =
     -- - Duration (default: 2 weeks)
     cliParser :: Parser CLI
     cliParser = do
-      let fileP = argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
-      cliEma <- flip Ema.CLI.Cli False . Some . Ema.CLI.Run <$> Ema.CLI.hostPortParser
-      (cliBaseDir, cliTimedotFile) <- (fst &&& snd) . splitFileName <$> fileP
+      cliHost <- Ema.CLI.hostParser
+      cliPort <- Ema.CLI.portParser
+      (cliBaseDir, cliTimedotFile) <-
+        (fst &&& snd) . splitFileName
+          <$> argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
       pure $ CLI {..}
 
     cliParserInfo :: ParserInfo CLI
