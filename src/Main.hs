@@ -1,3 +1,4 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE ApplicativeDo #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -8,8 +9,15 @@ module Main where
 import Data.Default (def)
 import Data.Map.Strict qualified as Map
 import Data.Map.Syntax ((##))
-import Data.Some (Some (Some))
-import Ema
+import Ema (
+  Asset (AssetGenerated),
+  Dynamic (Dynamic),
+  EmaSite (..),
+  Format (Html),
+  IsRoute,
+  SingleModelRoute (SingleModelRoute),
+ )
+import Ema qualified
 import Ema.CLI qualified
 import Generics.SOP qualified as SOP
 import Heist qualified as H
@@ -124,15 +132,9 @@ instance EmaSite Route where
 
 main :: IO ()
 main = withUtf8 $ do
-  cli <- parseCli
-  putStrLn $ "Running with args: " <> show cli
-  runEmaLiveServer (Proxy @Route) (cliHost cli) (cliPort cli) cli
-  where
-    -- Like `runSiteWithCli` but only runs the live server, using given host
-    -- and port.
-    runEmaLiveServer (Proxy :: Proxy r) host port cli =
-      let emaCli = Ema.CLI.Cli (Some $ Ema.CLI.Run (host, port)) False
-       in void $ runSiteWithCli @r emaCli cli
+  siteArg <- parseCli
+  putStrLn $ "Running with args: " <> show siteArg
+  Ema.runSiteLiveServerOnly @Route (cliHost siteArg) (cliPort siteArg) siteArg
 
 data CLI = CLI
   { -- | The base directory containing the timedot file. Ema will scan this.
