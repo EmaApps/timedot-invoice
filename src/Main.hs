@@ -80,30 +80,30 @@ filePatternsToWatch timedotFile =
   is a Ema `Dynamic`, as in - it is time-varying.
   - `siteOutput` defines the "output" data, which in our case is a HTML string
   to be written to "index.html" route.
-  - `SiteArg` (which is `CLI`) is what the `siteInput` is parametrized over. Its
+  - `SiteArg` (which is `Arg`) is what the `siteInput` is parametrized over. Its
   value is passed over to the `runSite` function which is called from `main`.
 
 -}
 instance EmaSite Route where
-  type SiteArg Route = CLI
-  siteInput _ _ CLI {..} = do
+  type SiteArg Route = Arg
+  siteInput _ _ Arg {..} = do
     model0 <- liftIO emptyModel
     -- We use the unionmount library to map the filesystem to in-memory `Model`,
     -- and update it over file as the files change. This abstraction is wrapped
     -- in a `Dynamic`.
     fmap Dynamic $
-      UM.mount cliBaseDir (filePatternsToWatch cliTimedotFile) [".*"] model0 $
+      UM.mount argBaseDir (filePatternsToWatch argTimedotFile) [".*"] model0 $
         \tag fp act -> case tag of
           FileType_Timedot -> case act of
             UM.Refresh _ () -> do
-              (errs, hrs) <- liftIO $ HLedger.parseTimedot $ cliBaseDir </> fp
+              (errs, hrs) <- liftIO $ HLedger.parseTimedot $ argBaseDir </> fp
               pure $ \m -> m {modelHours = hrs, modelErrors = errs}
             UM.Delete -> do
               putStrLn $ "WARNING: file gone: " <> fp
               pure $ \m -> m {modelHours = mempty, modelErrors = ["No timedot file available"]}
           FileType_Tpl -> case act of
             UM.Refresh _ () -> do
-              s <- readFileBS $ cliBaseDir </> fp
+              s <- readFileBS $ argBaseDir </> fp
               let tmplSt = H.addTemplateFile fp fp s def
               pure $ \m -> m {modelTemplateState = tmplSt}
             UM.Delete -> do
@@ -132,40 +132,37 @@ instance EmaSite Route where
 
 main :: IO ()
 main = withUtf8 $ do
-  siteArg <- parseCli
+  (siteArg, port) <- parseCli
   putStrLn $ "Running with args: " <> show siteArg
-  Ema.runSiteLiveServerOnly @Route (cliHost siteArg) (cliPort siteArg) siteArg
+  Ema.runSiteLiveServerOnly @Route "127.0.0.1" port siteArg
 
-data CLI = CLI
+-- | Argument to function that produces the Ema site input.
+data Arg = Arg
   { -- | The base directory containing the timedot file. Ema will scan this.
-    cliBaseDir :: FilePath
+    argBaseDir :: FilePath
   , -- | Filename of the timedot file under the base directory
-    cliTimedotFile :: FilePath
-  , -- | Live server host and port
-    cliHost :: Ema.CLI.Host
-  , cliPort :: Ema.CLI.Port
+    argTimedotFile :: FilePath
   }
   deriving stock (Eq, Show)
 
-parseCli :: IO CLI
+parseCli :: IO (Arg, Ema.CLI.Port)
 parseCli =
-  execParser cliParserInfo
+  execParser $ parserInfo cliParser
   where
-    -- TODO: Add more CLI params
+    -- TODO: Add more Arg params
     -- - Duration (default: 2 weeks)
-    cliParser :: Parser CLI
+    cliParser :: Parser (Arg, Ema.CLI.Port)
     cliParser = do
-      cliHost <- Ema.CLI.hostParser
       cliPort <- Ema.CLI.portParser
-      (cliBaseDir, cliTimedotFile) <-
+      (argBaseDir, argTimedotFile) <-
         (fst &&& snd) . splitFileName
           <$> argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
-      pure $ CLI {..}
+      pure (Arg {..}, cliPort)
 
-    cliParserInfo :: ParserInfo CLI
-    cliParserInfo =
+    parserInfo :: Parser a -> ParserInfo a
+    parserInfo p =
       info
-        (versionOption <*> cliParser <**> helper)
+        (versionOption <*> p <**> helper)
         ( fullDesc
             <> progDesc "timedot-invoice: TODO"
             <> header "timedot-invoice"

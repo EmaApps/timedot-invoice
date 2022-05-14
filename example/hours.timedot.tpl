@@ -11,7 +11,7 @@
   <link href="https://unpkg.com/tailwindcss@2/dist/tailwind.min.css" rel="stylesheet" type="text/css">
 </head>
 
-<!-- TODO: Allow overriding these from CLI (or foo.timedot.tpl.yaml)? -->
+<!-- TODO: Allow overriding these from Arg (or foo.timedot.tpl.yaml)? -->
 <!-- DoNotFormat -->
 <bind tag="theme">blue</bind>
 <bind tag="iconSize">w-4 h-4 flex-shrink-0</bind>
