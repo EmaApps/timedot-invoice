@@ -138,7 +138,7 @@ main = withUtf8 $ do
 
 -- | Argument to function that produces the Ema site input.
 data Arg = Arg
-  { -- | The base directory containing the timedot file. Ema will scan this.
+  { -- | The base directory containing the timedot file. It will be scanned.
     argBaseDir :: FilePath
   , -- | Filename of the timedot file under the base directory
     argTimedotFile :: FilePath
