@@ -60,6 +60,7 @@ executable timedot-invoice
     , uuid
     , with-utf8
     , xmlhtml
+    , yaml
 
   mixins:
     base hiding (Prelude),

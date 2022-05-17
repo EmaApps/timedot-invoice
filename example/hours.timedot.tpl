@@ -6,19 +6,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>
     Invoice
-    <invoice:date /> - Sridhar Ratnakumar
+    -
+    <invoice:metadata>
+      <value var="name" />
+    </invoice:metadata>
   </title>
   <link href="https://unpkg.com/tailwindcss@2/dist/tailwind.min.css" rel="stylesheet" type="text/css">
 </head>
 
-<!-- TODO: Allow overriding these from Arg (or foo.timedot.tpl.yaml)? -->
 <!-- DoNotFormat -->
-<bind tag="theme">blue</bind>
-<bind tag="iconSize">w-4 h-4 flex-shrink-0</bind>
+<bind tag="theme"><invoice:metadata><value var="theme" /></invoice:metadata></bind>
 <!-- DoNotFormat -->
 
 <body class="overflow-y-scroll">
-  <p class="text-red-500 text-3xl">Hello</p>
+  <header class="text-4xl text-center border-b-2 py-2 ">
+    Invoice
+    -
+    <invoice:metadata>
+      <value var="name" />
+    </invoice:metadata>
+  </header>
+
+  <p class="text-${theme}-500 text-3xl">Hello</p>
   <div class="container mx-auto max-w-screen-lg">
     <invoice:errors>
       <error>

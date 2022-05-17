@@ -6,9 +6,11 @@
 
 module Main where
 
+import Data.Aeson.Types qualified as Aeson
 import Data.Default (def)
 import Data.Map.Strict qualified as Map
 import Data.Map.Syntax ((##))
+import Data.Yaml qualified as Yaml
 import Ema (
   Asset (AssetGenerated),
   Dynamic (Dynamic),
@@ -22,6 +24,9 @@ import Ema.CLI qualified
 import Generics.SOP qualified as SOP
 import Heist qualified as H
 import Heist.Interpreted qualified as HI
+import Heist.Splices.Apply qualified as HA
+import Heist.Splices.Bind qualified as HB
+import Heist.Splices.Json qualified as HJ
 import Main.Utf8 (withUtf8)
 import Options.Applicative
 import System.FilePath (splitFileName, (</>))
@@ -47,6 +52,7 @@ data Route = Route_Index
 -- | All the data required to generate our "index.html" file
 data Model = Model
   { modelTemplateState :: H.TemplateState
+  , modelVars :: Aeson.Value
   , modelHours :: HLedger.TimedotEntries
   , modelErrors :: [Text]
   }
@@ -55,7 +61,7 @@ data Model = Model
 emptyModel :: IO Model
 emptyModel = do
   ts <- H.emptyTemplateState
-  pure $ Model ts mempty mempty
+  pure $ Model ts Aeson.Null mempty mempty
 
 -- | The type of files we want to watch (for changes) on disk.
 data FileType
@@ -109,13 +115,25 @@ instance EmaSite Route where
             UM.Delete -> do
               putStrLn $ "WARNING: file gone: " <> fp
               pure $ \m -> m {modelTemplateState = H.removeTemplateFile fp (modelTemplateState m)}
-          FileType_Yaml -> do
-            liftIO $ putStrLn $ "TODO: YAML handling " <> fp
-            pure id
+          FileType_Yaml -> case act of
+            UM.Refresh _ () -> do
+              liftIO (Yaml.decodeFileEither $ argBaseDir </> fp) >>= \case
+                Left err -> pure $ \m -> m {modelErrors = ["YAML error: " <> show err]}
+                Right v -> do
+                  print v
+                  pure $ \m -> m {modelVars = v}
+            UM.Delete -> do
+              putStrLn $ "WARNING: YAML file gone: " <> fp
+              pure $ \m -> m {modelVars = Aeson.Null}
   siteOutput _ m Route_Index =
     -- We use Heist templates for HTML. Here we define the variables required to
     -- render that template. cf. https://srid.ca/heist-start
     Ema.AssetGenerated Ema.Html . renderTpl (modelTemplateState m) $ do
+      -- Heist helpers
+      "bind" ## HB.bindImpl
+      "apply" ## HA.applyImpl
+      -- App specific vars
+      "invoice:metadata" ## HJ.bindJson (modelVars m)
       "invoice:errors" ## H.listSplice (modelErrors m) "error" $ \err -> "error:err" ## HI.textSplice err
       "invoice:hours" ## H.listSplice (modelHours m) "hour" $ \(day, clients) -> do
         "hour:day" ## HI.textSplice (show day)
