@@ -10,7 +10,7 @@ import Hledger qualified
 import Hledger.Data.Types qualified as HL
 import Hledger.Read.TimedotReader qualified as TimedotReader
 
-type TimedotEntries = [(Day, Map Client Hours)]
+type TimedotEntries = Map Day (Map Client Hours)
 
 type Error = Text
 
@@ -19,7 +19,7 @@ parseTimedot fp = do
   s <- readFileText fp
   jrnl <- readTimedot s
   let res = parseTransaction <$> HL.jtxns jrnl
-  pure (lefts res, rights res)
+  pure (lefts res, Map.fromListWith (<>) $ rights res)
 
 -- | Like `readJournal'` but for timedot files
 readTimedot :: Text -> IO HL.Journal
@@ -40,8 +40,9 @@ newtype Hours = Hours {unHours :: Integer}
 type WeekOfYear = Int
 
 -- TODO: Sane error handling (display in HTML)
-parseTransaction :: HL.Transaction -> Either Text (Day, Map Client Hours)
+parseTransaction :: HasCallStack => HL.Transaction -> Either Text (Day, Map Client Hours)
 parseTransaction (HL.Transaction {..}) = do
+  -- TODO: replace error with throwError
   hours <- fmap (Map.fromListWith (\_ _ -> error "dups")) $
     for tpostings $ \(HL.Posting {..}) -> do
       hs <- parseHours pamount

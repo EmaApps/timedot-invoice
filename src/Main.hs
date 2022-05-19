@@ -135,7 +135,7 @@ instance EmaSite Route where
       -- App specific vars
       "invoice:metadata" ## HJ.bindJson (modelVars m)
       "invoice:errors" ## H.listSplice (modelErrors m) "error" $ \err -> "error:err" ## HI.textSplice err
-      "invoice:hours" ## H.listSplice (modelHours m) "hour" $ \(day, clients) -> do
+      "invoice:hours" ## H.listSplice (Map.toList $ modelHours m) "hour" $ \(day, clients) -> do
         "hour:day" ## HI.textSplice (show day)
         "hour:clients" ## H.listSplice (Map.toList clients) "client" $ \(client, hours) -> do
           "client:name" ## HI.textSplice (show client)
