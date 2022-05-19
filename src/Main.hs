@@ -31,6 +31,7 @@ import Options.Applicative
 import System.FilePath (splitFileName, (</>))
 import System.FilePattern (FilePattern)
 import System.UnionMount qualified as UM
+import TI.Aeson qualified as A
 import TI.HLedger qualified as HLedger
 import TI.Heist qualified as H
 import TI.Matrix qualified as M
@@ -138,7 +139,9 @@ instance EmaSite Route where
       let matrix = M.matrixFromMap $ modelHours m
       "invoice:clients" ## H.listSplice (M.matrixCols matrix) "invoice:each-client" $ \client ->
         "invoice:client" ## HI.textSplice (toText . toString $ client)
-      "invoice:matrix" ## M.matrixSplice matrix
+      -- TODO: proper error reporting
+      let rate :: Integer = A.lookupAeson (error "No hourly_rate in YAML") (one "hourly_rate") (modelVars m)
+      M.matrixSplice "invoice:matrix" ((* fromInteger rate) . sum) matrix
     where
       renderTpl :: H.TemplateState -> H.Splices (HI.Splice Identity) -> LByteString
       renderTpl tmplSt args =

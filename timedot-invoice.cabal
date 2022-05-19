@@ -115,6 +115,7 @@ executable timedot-invoice
 
   main-is:            Main.hs
   other-modules:
+    TI.Aeson
     TI.Heist
     TI.HLedger
     TI.Matrix
