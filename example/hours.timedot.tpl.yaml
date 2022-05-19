@@ -1,4 +1,7 @@
+# Full name
 name: John Doe
-hourly_rate: 42
+# Rate per hour (for each client)
+hourly-rate: 42
 
+# Theme to use in the HTML template
 theme: blue

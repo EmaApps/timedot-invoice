@@ -38,7 +38,7 @@
     </invoice:errors>
 
     <p>TODO: Contact</p>
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
       <table class="w-full text-left text-gray-700 ">
         <!-- Header -->
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
@@ -75,7 +75,7 @@
                 <td>
                   <invoice:metadata>
                     <!-- DoNotFormat -->
-                    <dollar /><value var="hourly_rate" />/hr
+                    <dollar /><value var="hourly-rate" />/hr
                     <!-- DoNotFormat -->
                   </invoice:metadata>
                 </td>
@@ -90,7 +90,8 @@
             </matrix:each-row>
           </invoice:matrix>
           <tr>
-            <th colspan="5" class="text-right px-6 py-4">Total</th>
+            <th colspan="4" class="bg-gray-200"></th>
+            <th class="px-6 py-4">Total</th>
             <td>
               <!-- DoNotFormat -->
               <span class="text-lg font-bold">USD <dollar /><invoice:matrix:total /></span>

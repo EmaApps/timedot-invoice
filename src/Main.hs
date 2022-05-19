@@ -140,7 +140,7 @@ instance EmaSite Route where
       "invoice:clients" ## H.listSplice (M.matrixCols matrix) "invoice:each-client" $ \client ->
         "invoice:client" ## HI.textSplice (toText . toString $ client)
       -- TODO: proper error reporting
-      let rate :: Integer = A.lookupAeson (error "No hourly_rate in YAML") (one "hourly_rate") (modelVars m)
+      let rate :: Integer = A.lookupAeson (error "No hourly-rate in YAML") (one "hourly-rate") (modelVars m)
       M.matrixSplice "invoice:matrix" ((* fromInteger rate) . sum) matrix
     where
       renderTpl :: H.TemplateState -> H.Splices (HI.Splice Identity) -> LByteString
