@@ -8,7 +8,6 @@ module Main where
 
 import Data.Aeson.Types qualified as Aeson
 import Data.Default (def)
-import Data.Map.Strict qualified as Map
 import Data.Map.Syntax ((##))
 import Data.Yaml qualified as Yaml
 import Ema (
@@ -34,6 +33,7 @@ import System.FilePattern (FilePattern)
 import System.UnionMount qualified as UM
 import TI.HLedger qualified as HLedger
 import TI.Heist qualified as H
+import TI.Matrix qualified as M
 
 {- | The "index.html" route.
 
@@ -135,11 +135,10 @@ instance EmaSite Route where
       -- App specific vars
       "invoice:metadata" ## HJ.bindJson (modelVars m)
       "invoice:errors" ## H.listSplice (modelErrors m) "error" $ \err -> "error:err" ## HI.textSplice err
-      "invoice:hours" ## H.listSplice (Map.toList $ modelHours m) "hour" $ \(day, clients) -> do
-        "hour:day" ## HI.textSplice (show day)
-        "hour:clients" ## H.listSplice (Map.toList clients) "client" $ \(client, hours) -> do
-          "client:name" ## HI.textSplice (show client)
-          "client:hours" ## HI.textSplice (show hours)
+      let matrix = M.matrixFromMap $ modelHours m
+      "invoice:clients" ## H.listSplice (M.matrixCols matrix) "invoice:each-client" $ \client ->
+        "invoice:client" ## HI.textSplice (toText . toString $ client)
+      "invoice:matrix" ## M.matrixSplice matrix
     where
       renderTpl :: H.TemplateState -> H.Splices (HI.Splice Identity) -> LByteString
       renderTpl tmplSt args =

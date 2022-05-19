@@ -36,28 +36,47 @@
         </li>
       </error>
     </invoice:errors>
-    <invoice:hours>
-      <hour>
-        <em>
-          <hour:day />
-        </em>
-        -
-        <hour:clients>
-          <client>
-            <li>
-              <b>
-                <client:name />
-              </b>
-              -
-              <tt>
-                <client:hours />
-              </tt>
-            </li>
-          </client>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table class="w-full text-left text-gray-700 ">
+        <!-- Header -->
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
+          <tr>
+            <th></th>
+            <invoice:clients>
+              <invoice:each-client>
+                <th class="px-6 py-3">
+                  <invoice:client />
+                </th>
+              </invoice:each-client>
+            </invoice:clients>
+          </tr>
+        </thead>
+        <!-- Body -->
+        <tbody>
+          <invoice:matrix>
+            <matrix:each-row>
+              <tr class="bg-white border-b ">
+                <!-- Row: period -->
+                <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                  <matrix:row />
+                </th>
+                <!-- Row: clients -->
+                <matrix:cols>
+                  <matrix:each-column>
+                    <td>
+                      <matrix:cell />
+                    </td>
+                  </matrix:each-column>
+                </matrix:cols>
+              </tr>
 
-        </hour:clients>
-      </hour>
-    </invoice:hours>
+            </matrix:each-row>
+          </invoice:matrix>
+
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </body>
 

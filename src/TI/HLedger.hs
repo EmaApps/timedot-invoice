@@ -10,6 +10,7 @@ import Hledger qualified
 import Hledger.Data.Types qualified as HL
 import Hledger.Read.TimedotReader qualified as TimedotReader
 
+-- TODO: Group by week instead.
 type TimedotEntries = Map Day (Map Client Hours)
 
 type Error = Text
@@ -31,7 +32,7 @@ readTimedot t = Hledger.readJournal opts Nothing t >>= either Hledger.error' ret
         & Hledger.mformat ?~ sFormat
 
 newtype Client = Client {unClient :: Text}
-  deriving newtype (Show, Eq, Ord, IsString)
+  deriving newtype (Show, Eq, Ord, IsString, ToString)
 
 newtype Hours = Hours {unHours :: Integer}
   deriving newtype (Show, Eq, Ord, Num)
