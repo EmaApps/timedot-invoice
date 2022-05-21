@@ -1,5 +1,24 @@
 # Full name
-name: John Doe
+name: Douglas Adams
+address:
+  - 7, Lion Yard,
+  - Cambridge CB2 3QD,
+  - United Kingdom
+payable-to:
+  name: Q Continuum
+  address:
+    - 24, Galaxy Way
+    - Somewhere X1Y 3Z4
+    - Infinitude
+  contact:
+    name: John de Lancie
+    phone: +1 (555) 1234 567
+    email: q@continuum.uni
+payment: |
+  <div class="flex flex-col space-y-4 mt-8">
+    <p>Please pay to the following <b>USDC</b> address (ERC-20)</p>
+    <pre>0x10b86991c6218b36c1d19D4a2e9Eb0cE3606eB48</pre>
+  </div>
 # Rate per hour (for each client)
 hourly-rate: 42
 

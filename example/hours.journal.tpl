@@ -37,7 +37,68 @@
       </error>
     </invoice:errors>
 
-    <p>TODO: Contact</p>
+    <div class="flex flex-row">
+      <section id="me" class="w-2/3">
+        Payable to:
+        <div class="text-3xl font-bold">
+          <invoice:metadata>
+            <value var="name" />
+          </invoice:metadata>
+        </div>
+        <address id="address">
+          <invoice:metadata>
+            <with var="address">
+              <div>
+                <value />
+              </div>
+            </with>
+          </invoice:metadata>
+        </address>
+        <hr />
+        <div>
+          Invoice date: TODO
+        </div>
+
+      </section>
+      <section id="them" class="">
+        Client:
+        <div class="text-3xl font-bold">
+          <invoice:metadata>
+            <value var="payable-to.name" />
+          </invoice:metadata>
+        </div>
+        <address id="address">
+          <invoice:metadata>
+            <with var="payable-to.address">
+              <div>
+                <value />
+              </div>
+            </with>
+          </invoice:metadata>
+        </address>
+        <hr />
+        Contact:
+        <div class="text-2xl font-bold">
+          <invoice:metadata>
+            <value var="payable-to.contact.name" />
+          </invoice:metadata>
+        </div>
+        <div class="italic">
+          <invoice:metadata>
+            <value var="payable-to.contact.phone" />
+          </invoice:metadata>
+        </div>
+        <div class="">
+          <invoice:metadata>
+            <value var="payable-to.contact.email" />
+          </invoice:metadata>
+        </div>
+
+
+      </section>
+
+    </div>
+
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
       <table class="w-full text-left text-gray-700 ">
         <!-- Header -->
@@ -91,7 +152,7 @@
           </invoice:matrix>
           <tr>
             <th colspan="4" class="bg-gray-200"></th>
-            <th class="px-6 py-4">Total</th>
+            <th class="px-6 py-4">Amount Owed</th>
             <td>
               <!-- DoNotFormat -->
               <span class="text-lg font-bold">USD <dollar /><invoice:matrix:total /></span>
@@ -103,7 +164,11 @@
       </table>
     </div>
 
-    <p>TODO: Payment info</p>
+    <div class="text-center text-xl">
+      <invoice:metadata>
+        <snippet var="payment" />
+      </invoice:metadata>
+    </div>
 
   </div>
 </body>
