@@ -52,7 +52,7 @@
               </invoice:each-client>
             </invoice:clients>
             <th>Rate</th>
-            <th>Total</th>
+            <th class="text-right px-6">Total</th>
           </tr>
         </thead>
         <!-- Body -->
@@ -79,10 +79,10 @@
                     <!-- DoNotFormat -->
                   </invoice:metadata>
                 </td>
-                <td>
+                <td class="text-right px-6 font-mono">
                   <!-- DoNotFormat -->
-                  USD <dollar /><matrix:row:total />
-                    <!-- DoNotFormat -->
+                  <dollar /><matrix:row:total />
+                  <!-- DoNotFormat -->
                 </td>
               </tr>
 
