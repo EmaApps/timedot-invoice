@@ -118,6 +118,7 @@ instance EmaSite Route where
               pure $ \m -> m {modelTemplateState = H.removeTemplateFile fp (modelTemplateState m)}
           FileType_Yaml -> case act of
             UM.Refresh _ () -> do
+              -- FIXME: sometimes file is empty (same as Emanote bug)
               liftIO (Yaml.decodeFileEither $ argBaseDir </> fp) >>= \case
                 Left err -> pure $ \m -> m {modelErrors = ["YAML error: " <> show err]}
                 Right v -> do
