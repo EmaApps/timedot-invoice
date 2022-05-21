@@ -2,27 +2,27 @@
 # https://hledger.org/time-planning.html
 
 2022-05-09
-  work:google     9
+  hours:google     9
 2022-05-10
-  work:google     8
-  work:microsoft    2
+  hours:google     8
+  hours:microsoft    2
 2022-05-11
-  work:google    7
-  work:microsoft    1
+  hours:google    7
+  hours:microsoft    1
 2022-05-12
-  work:google    11
+  hours:google    11
 2022-05-13
-  work:google   7
+  hours:google   7
 2022-05-15
-  work:google   1
+  hours:google   1
 
 2022-05-16
-  work:google   2
-  work:microsoft   2
+  hours:google   2
+  hours:microsoft   2
 2022-05-17  
-  work:google    1  
-  work:facebook    1
+  hours:google    1  
+  hours:facebook    1
 2022-05-18  
-  work:microsoft    1
+  hours:microsoft    1
 2022-05-19
-  work:google    1  
+  hours:google    1  
