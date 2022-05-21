@@ -7,9 +7,6 @@
     flake-utils.follows = "ema/flake-utils";
     flake-compat.follows = "ema/flake-compat";
 
-    unionmount.url = "github:srid/unionmount/master";
-    unionmount.inputs.nixpkgs.follows = "ema/nixpkgs";
-
     heist = {
       url = "github:srid/heist/emanote-release--ghc9";
       flake = false;
@@ -42,7 +39,6 @@
               overrides = self: super: with pkgs.haskell.lib; {
                 ema = inputs.ema.defaultPackage.${system};
                 tailwind = tailwind-haskell;
-                unionmount = self.callCabal2nix "unionmount" inputs.unionmount { };
                 heist-emanote = doJailbreak (dontCheck (self.callCabal2nix "heist-emanote" inputs.heist { }));
               };
               modifier = drv:
