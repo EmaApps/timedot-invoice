@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>
     Invoice
+    <invoice:number />
     -
     <invoice:metadata>
       <value var="name" />
@@ -23,6 +24,7 @@
   <div class="container mx-auto max-w-screen-lg pt-4">
     <header class="text-4xl text-center border-b-2 py-2 mb-4 bg-${theme}-200 ">
       Invoice
+      <invoice:number />
       -
       <invoice:metadata>
         <value var="name" />
@@ -56,7 +58,8 @@
         </address>
         <hr />
         <div>
-          Invoice date: TODO
+          Invoice date:
+          <invoice:number />
         </div>
 
       </section>
@@ -122,7 +125,7 @@
             <matrix:each-row>
               <tr class="bg-white border-b ">
                 <!-- Row: period -->
-                <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                <th class="px-6 py-4 font-mono font-medium text-sm text-gray-900 whitespace-nowrap">
                   <matrix:row />
                 </th>
                 <!-- Row: clients -->

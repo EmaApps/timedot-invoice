@@ -9,6 +9,7 @@ module Main where
 import Data.Aeson.Types qualified as Aeson
 import Data.Default (def)
 import Data.Map.Syntax ((##))
+import Data.Time (UTCTime (utctDay), getCurrentTime)
 import Data.Time.Calendar (Day)
 import Data.Yaml qualified as Yaml
 import Ema (
@@ -21,6 +22,7 @@ import Ema (
  )
 import Ema qualified
 import Ema.CLI qualified
+import GHC.IO (unsafePerformIO)
 import Generics.SOP qualified as SOP
 import Heist qualified as H
 import Heist.Interpreted qualified as HI
@@ -137,6 +139,8 @@ instance EmaSite Route where
       "apply" ## HA.applyImpl
       -- App specific vars
       "invoice:metadata" ## HJ.bindJson (modelVars m)
+      -- Invoice number is just the date
+      "invoice:number" ## HI.textSplice (show today)
       "invoice:errors" ## H.listSplice (modelErrors m) "error" $ \err -> "error:err" ## HI.textSplice err
       let matrix = M.matrixFromMap $ modelHours m
       "invoice:clients" ## H.listSplice (M.matrixCols matrix) "invoice:each-client" $ \client ->
@@ -145,6 +149,7 @@ instance EmaSite Route where
       let rate :: Integer = A.lookupAeson (error "No hourly-rate in YAML") (one "hourly-rate") (modelVars m)
       M.matrixSplice "invoice:matrix" renderRow ((* fromInteger rate) . sum) matrix
     where
+      today = unsafePerformIO $ utctDay <$> getCurrentTime
       renderRow :: NonEmpty Day -> Text
       renderRow days =
         -- TODO: It should be possible to customize this in .tpl
