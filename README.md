@@ -14,3 +14,14 @@ Contributions are welcome, in particular on any of the following aspects:
 - More general parameters (invoice duration, granularity, etc.) without compromising the ability to specialize
 
 Run `bin/run` and hack away in VSCode under Nix shell.
+
+## Tasks
+
+The following are needed before *general availability* of the project:
+
+- File management
+    - [ ] A 'default' layer, for the .tpl file. Although the user can override it optionally, they should be able to use the default HTML without having to customize it.
+    - [ ] Auto-copy the .yaml file alongside the timedot file. Default layer's version is useless here. 
+- Customizability
+    - [ ] Customize invoice duration (currently hardcoded to 'everything')
+    - [ ] Customize invoice precision (currently hardcoded to 'weekly')

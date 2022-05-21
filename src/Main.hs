@@ -149,6 +149,7 @@ instance EmaSite Route where
       let rate :: Integer = A.lookupAeson (error "No hourly-rate in YAML") (one "hourly-rate") (modelVars m)
       M.matrixSplice "invoice:matrix" renderRow ((* fromInteger rate) . sum) matrix
     where
+      -- FIXME: Use local timezone rather than UTC
       today = unsafePerformIO $ utctDay <$> getCurrentTime
       renderRow :: NonEmpty Day -> Text
       renderRow days =

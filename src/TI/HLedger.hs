@@ -34,10 +34,10 @@ readTimedot t = Hledger.readJournal opts Nothing t >>= either Hledger.error' ret
       Hledger.definputopts
         & Hledger.mformat ?~ sFormat
 
-newtype Client = Client {unClient :: Text}
+newtype Client = Client Text
   deriving newtype (Show, Eq, Ord, IsString, ToString)
 
-newtype Hours = Hours {unHours :: Integer}
+newtype Hours = Hours Integer
   deriving newtype (Show, Eq, Ord, Num)
 
 -- TODO: Sane error handling (display in HTML)

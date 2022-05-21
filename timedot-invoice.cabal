@@ -25,10 +25,8 @@ executable timedot-invoice
     , aeson
     , async
     , base
-    , commonmark-simple
     , containers
     , data-default
-    , dependent-sum
     , directory
     , ema                   >=0.7
     , filepath
@@ -56,7 +54,6 @@ executable timedot-invoice
     , time
     , unionmount            >=0.2
     , unliftio
-    , url-slug
     , uuid
     , with-utf8
     , xmlhtml
