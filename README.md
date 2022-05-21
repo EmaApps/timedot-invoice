@@ -13,4 +13,4 @@ Contributions are welcome, in particular on any of the following aspects:
 - Design improvements (HTML, CSS)
 - More general parameters (invoice duration, granularity, etc.) without compromising the ability to specialize
 
-Run `bin/run` and hack away in VSCode.
+Run `bin/run` and hack away in VSCode under Nix shell.

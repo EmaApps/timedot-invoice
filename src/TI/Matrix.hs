@@ -25,14 +25,16 @@ matrixFromMap m =
 matrixSplice ::
   (Show r, Show c, Show a, Num a, Num total, Show total) =>
   Text ->
+  -- | How to render the row (TODO: take Splice instead)
+  (r -> Text) ->
   -- | Row totaling function
   ([a] -> total) ->
   Matrix r c a ->
   MapSyntax Text (HI.Splice Identity)
-matrixSplice name rowSum m = do
+matrixSplice name renderRow rowSum m = do
   let grandTotal = sum (rowSum . mapMaybe snd . snd <$> matrixCells m)
   name ## H.listSplice (matrixCells m) "matrix:each-row" $ \(row, cols) -> do
-    "matrix:row" ## HI.textSplice (show row)
+    "matrix:row" ## HI.textSplice (renderRow row)
     "matrix:cols" ## H.listSplice cols "matrix:each-column" $ \(col, mval) -> do
       "matrix:col" ## HI.textSplice (show col)
       -- TODO: handle maybe via template

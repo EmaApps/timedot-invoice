@@ -9,6 +9,7 @@ module Main where
 import Data.Aeson.Types qualified as Aeson
 import Data.Default (def)
 import Data.Map.Syntax ((##))
+import Data.Time.Calendar (Day)
 import Data.Yaml qualified as Yaml
 import Ema (
   Asset (AssetGenerated),
@@ -142,8 +143,12 @@ instance EmaSite Route where
         "invoice:client" ## HI.textSplice (toText . toString $ client)
       -- TODO: proper error reporting
       let rate :: Integer = A.lookupAeson (error "No hourly-rate in YAML") (one "hourly-rate") (modelVars m)
-      M.matrixSplice "invoice:matrix" ((* fromInteger rate) . sum) matrix
+      M.matrixSplice "invoice:matrix" renderRow ((* fromInteger rate) . sum) matrix
     where
+      renderRow :: NonEmpty Day -> Text
+      renderRow days =
+        -- TODO: It should be possible to customize this in .tpl
+        show (head days) <> " ➔ " <> show (last days)
       renderTpl :: H.TemplateState -> H.Splices (HI.Splice Identity) -> LByteString
       renderTpl tmplSt args =
         -- TODO: don't hardcode template name
