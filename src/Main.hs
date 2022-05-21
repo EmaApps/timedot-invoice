@@ -71,7 +71,7 @@ data FileType
   | FileType_Yaml
   deriving stock (Eq, Show, Ord)
 
-{- | Given a "foo.timedot" what kind of files do we want to observe
+{- | Given a "foo.journal" what kind of files do we want to observe
 for changes on?
 -}
 filePatternsToWatch :: FilePath -> [(FileType, FilePattern)]
@@ -146,7 +146,7 @@ instance EmaSite Route where
       renderTpl :: H.TemplateState -> H.Splices (HI.Splice Identity) -> LByteString
       renderTpl tmplSt args =
         -- TODO: don't hardcode template name
-        either errorHtml id $ H.renderHeistTemplate "hours.timedot" args tmplSt
+        either errorHtml id $ H.renderHeistTemplate "hours.journal" args tmplSt
         where
           errorHtml err = "<span style=\"text-color: red\">" <> encodeUtf8 err <> "</span>"
 
@@ -176,7 +176,7 @@ parseCli =
       cliPort <- Ema.CLI.portParser
       (argBaseDir, argTimedotFile) <-
         (fst &&& snd) . splitFileName
-          <$> argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
+          <$> argument str (metavar "TIMEDOT_FILE" <> value "./hours.journal")
       pure (Arg {..}, cliPort)
 
     parserInfo :: Parser a -> ParserInfo a
