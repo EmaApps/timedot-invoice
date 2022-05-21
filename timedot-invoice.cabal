@@ -34,7 +34,7 @@ executable timedot-invoice
     , filepath
     , filepattern
     , generics-sop
-    , heist-emanote
+    , heist-emanote         >=1.2.1
     , hledger
     , hledger-lib
     , lens

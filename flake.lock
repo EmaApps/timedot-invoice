@@ -87,16 +87,16 @@
     "heist": {
       "flake": false,
       "locked": {
-        "lastModified": 1649279862,
-        "narHash": "sha256-YPD7Qv1ZcXM4uAlsZ2P/2CKen4H2OY3VHHGluYFVulg=",
+        "lastModified": 1653169917,
+        "narHash": "sha256-i52wi4nNC6ATx8gTtmpLnxQZEhKSM0LbpmSu57d5VqI=",
         "owner": "srid",
         "repo": "heist",
-        "rev": "085c7ab88b73079de27c8def27d67f03853fde05",
+        "rev": "75533cade1a0d9859ff487cbf6f22e98711248d3",
         "type": "github"
       },
       "original": {
         "owner": "srid",
-        "ref": "emanote-release--ghc9",
+        "ref": "emanote",
         "repo": "heist",
         "type": "github"
       }

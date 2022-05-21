@@ -8,7 +8,7 @@
     flake-compat.follows = "ema/flake-compat";
 
     heist = {
-      url = "github:srid/heist/emanote-release--ghc9";
+      url = "github:srid/heist/emanote";
       flake = false;
     };
   };
