@@ -38,6 +38,6 @@ matrixSplice name renderRow rowSum m = do
     "matrix:cols" ## H.listSplice cols "matrix:each-column" $ \(col, mval) -> do
       "matrix:col" ## HI.textSplice (show col)
       -- TODO: handle maybe via template
-      "matrix:cell" ## HI.textSplice (show mval)
+      "matrix:cell" ## HI.textSplice (maybe "-" show mval)
     "matrix:row:total" ## HI.textSplice (show $ rowSum $ catMaybes $ snd <$> cols)
   (name <> ":total") ## HI.textSplice (show grandTotal)
