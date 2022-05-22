@@ -160,11 +160,16 @@
                 </td>
               </tr>
 
-
             </matrix:each-row>
           </invoice:matrix>
           <tr>
-            <th colspan="4" class="bg-gray-200"></th>
+            <th class="bg-gray-200"></th>
+            <invoice:clients>
+              <invoice:each-client>
+                <th class="bg-gray-200">
+                </th>
+              </invoice:each-client>
+            </invoice:clients>
             <th class="px-6 py-4">Amount Owed</th>
             <td class="text-lg text-right font-bold pr-6">
               <!-- DoNotFormat -->
