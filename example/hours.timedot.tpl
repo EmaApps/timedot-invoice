@@ -112,7 +112,7 @@
 
     </div>
 
-    <div class="relative overflow-x-auto shadow-md border-${theme}-700 border-2 sm:rounded-lg my-4">
+    <div class="shadow-md border-${theme}-700 border-2 sm:rounded-lg my-4">
       <table class="w-full table-auto text-left text-gray-700 ">
         <!-- Header -->
         <thead class="text-xs text-gray-100 bg-${theme}-700 uppercase bg-gray-50 ">
