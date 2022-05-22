@@ -171,7 +171,7 @@
               </invoice:each-client>
             </invoice:clients>
             <th class="px-6 py-4">Total</th>
-            <td class="text-lg text-right font-bold pr-6">
+            <td class="pr-6 font-mono text-lg font-bold text-right">
               <!-- DoNotFormat -->
               <dollar /><invoice:matrix:total />
               <!-- DoNotFormat -->
