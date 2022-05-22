@@ -29,8 +29,8 @@
 <!-- DoNotFormat -->
 
 <body class="overflow-y-scroll bg-gray-200 ">
-  <div class="container mx-auto max-w-screen-lg pt-4 bg-white mt-8 px-4 pt-8 pb-8">
-    <header class="text-4xl text-center text-gray-200 border-b-2 py-2 mb-4 bg-gray-800 rounded">
+  <div class="container max-w-screen-lg px-4 pt-4 pt-8 pb-8 mx-auto mt-8 bg-white">
+    <header class="py-2 mb-4 text-4xl text-center text-gray-200 bg-gray-800 border-b-2 rounded">
       Invoice
       <invoice:number />
       -
@@ -48,9 +48,9 @@
     </invoice:errors>
 
     <div class="flex flex-row my-8">
-      <section id="me" class="w-2/3 flex flex-col flex-start ">
+      <section id="me" class="flex flex-col w-2/3 flex-start ">
         <div>Payable to:</div>
-        <div class="text-3xl font-bold mt-2">
+        <div class="mt-2 text-3xl font-bold">
           <invoice:metadata>
             <value var="name" />
           </invoice:metadata>
@@ -74,7 +74,7 @@
       </section>
       <section id="them" class="flex flex-col flex-start">
         <div>Client:</div>
-        <div class="text-3xl font-bold mt-2">
+        <div class="mt-2 text-3xl font-bold">
           <invoice:metadata>
             <value var="payable-to.name" />
           </invoice:metadata>
@@ -88,7 +88,7 @@
             </with>
           </invoice:metadata>
         </address>
-        <div class="text-2xl font-bold mt-4">
+        <div class="mt-4 text-2xl font-bold">
           <invoice:metadata>
             <value var="payable-to.contact.name" />
           </invoice:metadata>
@@ -113,20 +113,20 @@
     </div>
 
     <div class="shadow-md border-${theme}-700 border-2 sm:rounded-lg my-4">
-      <table class="w-full table-auto text-left text-gray-700 ">
+      <table class="w-full text-left text-gray-700 table-auto ">
         <!-- Header -->
         <thead class="text-xs text-gray-100 bg-${theme}-700 uppercase bg-gray-50 ">
           <tr>
             <th></th>
             <invoice:clients>
               <invoice:each-client>
-                <th class="pr-6 py-3 text-left">
+                <th class="py-3 pr-6 text-left">
                   <invoice:client />
                 </th>
               </invoice:each-client>
             </invoice:clients>
             <th>Rate</th>
-            <th class="text-right px-6">Total</th>
+            <th class="px-6 text-right">Total</th>
           </tr>
         </thead>
         <!-- Body -->
@@ -135,7 +135,7 @@
             <matrix:each-row>
               <tr class="bg-white border-b ">
                 <!-- Row: period -->
-                <th class="px-6 py-4 font-mono font-medium text-sm text-gray-900 whitespace-nowrap">
+                <th class="px-6 py-4 font-mono text-sm font-medium text-gray-900 whitespace-nowrap">
                   <matrix:row />
                 </th>
                 <!-- Row: clients -->
@@ -153,7 +153,7 @@
                     <!-- DoNotFormat -->
                   </invoice:metadata>
                 </td>
-                <td class="text-right text-lg px-6 font-mono">
+                <td class="px-6 font-mono text-lg text-right">
                   <!-- DoNotFormat -->
                   <dollar /><matrix:row:total />
                   <!-- DoNotFormat -->
@@ -183,13 +183,13 @@
     </div>
 
 
-    <div class="text-center text-xl">
+    <div class="text-xl text-center">
       <invoice:metadata>
         <snippet var="payment" />
       </invoice:metadata>
     </div>
 
-    <div class="relative flex py-5 items-center">
+    <div class="relative flex items-center py-5">
       <div class="flex-grow border-t border-gray-400"></div>
       <span class="flex-shrink mx-4 text-gray-400">Thank you for your business</span>
       <div class="flex-grow border-t border-gray-400"></div>
