@@ -136,10 +136,6 @@
     "root": {
       "inputs": {
         "ema": "ema",
-        "flake-compat": [
-          "ema",
-          "flake-compat"
-        ],
         "flake-utils": [
           "ema",
           "flake-utils"

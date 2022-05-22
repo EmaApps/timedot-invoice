@@ -5,7 +5,6 @@
     nixpkgs.follows = "ema/nixpkgs";
     tailwind-haskell.url = "github:srid/tailwind-haskell/master";
     flake-utils.follows = "ema/flake-utils";
-    flake-compat.follows = "ema/flake-compat";
 
     heist = {
       url = "github:srid/heist/emanote";
@@ -58,7 +57,5 @@
 
           # Used by `nix develop`
           devShell = project true;
-        }) // {
-      herculesCI.ciSystems = [ "x86_64-linux" ];
-    };
+        });
 }
