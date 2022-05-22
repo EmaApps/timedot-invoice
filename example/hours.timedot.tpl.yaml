@@ -23,7 +23,7 @@ payment-usdc: "0x10b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
 # the YAML vars above. In this example we use USDC payment method.
 payment: |
   <div class="flex flex-col space-y-4 mt-8">
-    <p>Please pay to the following <b>USDC</b> address (ERC-20)</p>
+    <p>Please pay USD <b><dollar /><invoice:matrix:total /></b>, in <b>USDC</b> tokens, to the following ERC-20 address</p>
     <div>
       <a href="https://etherscan.io/address/${value:payment-usdc}" 
         class="hover:underline text-center"

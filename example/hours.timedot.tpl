@@ -141,7 +141,7 @@
                 <!-- Row: clients -->
                 <matrix:cols>
                   <matrix:each-column>
-                    <td>
+                    <td class="text-left">
                       <matrix:cell />
                     </td>
                   </matrix:each-column>
@@ -170,10 +170,10 @@
                 </th>
               </invoice:each-client>
             </invoice:clients>
-            <th class="px-6 py-4">Amount Owed</th>
+            <th class="px-6 py-4">Total</th>
             <td class="text-lg text-right font-bold pr-6">
               <!-- DoNotFormat -->
-              USD <dollar /><invoice:matrix:total />
+              <dollar /><invoice:matrix:total />
               <!-- DoNotFormat -->
             </td>
           </tr>
