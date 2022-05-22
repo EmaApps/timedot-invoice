@@ -8,6 +8,7 @@
 		"heybourn.headwind",
 		"voorjaar.windicss-intellisense",
 		"jnoortheen.nix-ide",
-		"mark-hansen.hledger-vscode"
+		"mark-hansen.hledger-vscode",
+		"bradlc.vscode-tailwindcss"
 	]
 }
