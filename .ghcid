@@ -1,1 +1,1 @@
---warnings -T "Main.main" --setup ":set args --port=9345 ./example/hours.journal"
+--warnings -T "Main.main" --setup ":set args --port=9345 ./example/hours.timedot"

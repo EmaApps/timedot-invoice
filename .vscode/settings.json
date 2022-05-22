@@ -3,7 +3,8 @@
     "editor.formatOnSave": true,
     "haskell.formattingProvider": "fourmolu",
     "files.associations": {
-        "*.tpl": "html"
+        "*.tpl": "html",
+        "*.timedot": "hledger"
     },
     "html.format.unformattedContentDelimiter": "<!-- DoNotFormat -->",
     "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"

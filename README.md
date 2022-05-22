@@ -17,7 +17,7 @@ Run `bin/run` and hack away in VSCode under Nix shell.
 
 ## Tasks
 
-The following are needed before *general availability* of the project:
+I already use this to generate my invoices. However, the following must be finished before *general availability* of the project:
 
 - File management
     - [ ] A 'default' layer, for the .tpl file. Although the user can override it optionally, they should be able to use the default HTML without having to customize it.

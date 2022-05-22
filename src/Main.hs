@@ -158,7 +158,7 @@ instance EmaSite Route where
       renderTpl :: H.TemplateState -> H.Splices (HI.Splice Identity) -> LByteString
       renderTpl tmplSt args =
         -- TODO: don't hardcode template name
-        either errorHtml id $ H.renderHeistTemplate "hours.journal" args tmplSt
+        either errorHtml id $ H.renderHeistTemplate "hours.timedot" args tmplSt
         where
           errorHtml err = "<span style=\"text-color: red\">" <> encodeUtf8 err <> "</span>"
 
@@ -188,7 +188,7 @@ parseCli =
       cliPort <- Ema.CLI.portParser
       (argBaseDir, argTimedotFile) <-
         (fst &&& snd) . splitFileName
-          <$> argument str (metavar "TIMEDOT_FILE" <> value "./hours.journal")
+          <$> argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
       pure (Arg {..}, cliPort)
 
     parserInfo :: Parser a -> ParserInfo a
