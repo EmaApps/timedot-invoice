@@ -22,11 +22,11 @@ payment-usdc: "0x10b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
 # Put your payment information here. You can use arbitrary HTML, and use any of
 # the YAML vars above. In this example we use USDC payment method.
 payment: |
-  <div class="flex flex-col space-y-4 mt-8">
-    <p>Please pay USD <b><dollar /><invoice:matrix:total /></b>, in <b>USDC</b> tokens, to the following ERC-20 address</p>
+  <div class="flex flex-col mt-8 space-y-4">
+    <p>Please pay USD <span class="font-mono font-bold"><dollar /><invoice:matrix:total /></span>, in <b>USDC</b> tokens, to the following ERC-20 address</p>
     <div>
       <a href="https://etherscan.io/address/${value:payment-usdc}" 
-        class="hover:underline text-center"
+        class="text-center hover:underline"
         title="View on Etherscan">
         <tt><invoice:metadata><value var="payment-usdc" /></invoice:metadata></tt>
       </a>
