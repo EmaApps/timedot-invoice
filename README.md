@@ -6,6 +6,8 @@ WIP: `nix run`-generate your invoice from a [hledger timedot](https://hledger.or
 - Make full use of [Ema](https://ema.srid.ca/)'s hot reload, for a live view of invoice.
 - Simple. Does one thing, and one thing only. No kitchen sink. "Print to PDF" if you want PDF.
 
+Nix Cache: https://garnix.io/docs/caching
+
 ## Contributing
 
 Contributions are welcome, in particular on any of the following aspects:
