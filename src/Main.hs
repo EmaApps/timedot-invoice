@@ -21,7 +21,6 @@ import Ema (
   SingleModelRoute (SingleModelRoute),
  )
 import Ema qualified
-import Ema.CLI qualified
 import GHC.IO (unsafePerformIO)
 import Generics.SOP qualified as SOP
 import Heist qualified as H
@@ -166,7 +165,7 @@ main :: IO ()
 main = withUtf8 $ do
   siteArg <- parseCli
   putStrLn $ "Running with args: " <> show siteArg
-  Ema.runSiteLiveServerOnly @Route "127.0.0.1" Nothing siteArg
+  void $ Ema.runSiteWithCli @Route def siteArg
 
 -- | Argument to function that produces the Ema site input.
 data Arg = Arg
