@@ -164,9 +164,9 @@ instance EmaSite Route where
 
 main :: IO ()
 main = withUtf8 $ do
-  (siteArg, port) <- parseCli
+  siteArg <- parseCli
   putStrLn $ "Running with args: " <> show siteArg
-  Ema.runSiteLiveServerOnly @Route "127.0.0.1" port siteArg
+  Ema.runSiteLiveServerOnly @Route "127.0.0.1" Nothing siteArg
 
 -- | Argument to function that produces the Ema site input.
 data Arg = Arg
@@ -177,19 +177,16 @@ data Arg = Arg
   }
   deriving stock (Eq, Show)
 
-parseCli :: IO (Arg, Ema.CLI.Port)
+parseCli :: IO Arg
 parseCli =
   execParser $ parserInfo cliParser
   where
     -- TODO: Add more Arg params
     -- - Duration (default: 2 weeks)
-    cliParser :: Parser (Arg, Ema.CLI.Port)
+    cliParser :: Parser Arg
     cliParser = do
-      cliPort <- Ema.CLI.portParser
-      (argBaseDir, argTimedotFile) <-
-        (fst &&& snd) . splitFileName
-          <$> argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
-      pure (Arg {..}, cliPort)
+      uncurry Arg . (fst &&& snd) . splitFileName
+        <$> argument str (metavar "TIMEDOT_FILE" <> value "./hours.timedot")
 
     parserInfo :: Parser a -> ParserInfo a
     parserInfo p =

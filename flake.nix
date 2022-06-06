@@ -4,7 +4,7 @@
     ema.url = "github:srid/ema/multisite";
     nixpkgs.follows = "ema/nixpkgs";
     tailwind-haskell.url = "github:srid/tailwind-haskell/master";
-    flake-utils.follows = "ema/flake-utils";
+    flake-utils.url = "github:numtide/flake-utils";
 
     heist = {
       url = "github:srid/heist/emanote";
@@ -12,6 +12,7 @@
     };
   };
   outputs = inputs@{ self, nixpkgs, flake-utils, ... }:
+    # TODO: Switch to srid/haskell-flake
     flake-utils.lib.eachDefaultSystem
       (system:
         let
@@ -36,7 +37,7 @@
               root = ./.;
               withHoogle = false;
               overrides = self: super: with pkgs.haskell.lib; {
-                ema = inputs.ema.defaultPackage.${system};
+                ema = inputs.ema.packages.${system}.default;
                 tailwind = tailwind-haskell;
                 heist-emanote = doJailbreak (dontCheck (self.callCabal2nix "heist-emanote" inputs.heist { }));
               };
