@@ -1,62 +1,53 @@
 {
-  description = "Ema template app";
+  description = "timedot-invoice";
   inputs = {
-    ema.url = "github:srid/ema/multisite";
-    nixpkgs.follows = "ema/nixpkgs";
-    tailwind-haskell.url = "github:srid/tailwind-haskell/master";
-    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs.follows = "nixpkgs";
+    haskell-flake.url = "github:srid/haskell-flake";
 
-    heist = {
+    # Haskell overrides
+    ema.url = "github:srid/ema/multisite";
+    ema.flake = false;
+    tailwind-haskell.url = "github:srid/tailwind-haskell/master";
+    tailwind-haskell.inputs.nixpkgs.follows = "nixpkgs";
+    heist-emanote = {
       url = "github:srid/heist/emanote";
       flake = false;
     };
-  };
-  outputs = inputs@{ self, nixpkgs, flake-utils, ... }:
-    # TODO: Switch to srid/haskell-flake
-    flake-utils.lib.eachDefaultSystem
-      (system:
-        let
-          name = "timedot-invoice";
-          pkgs = nixpkgs.legacyPackages.${system};
-          inherit (pkgs.lib.trivial) pipe flip;
-          inherit (pkgs.lib.lists) optionals;
-          hp = pkgs.haskellPackages;
-          tailwind-haskell = inputs.tailwind-haskell.defaultPackage.${system};
-          shellDeps = with hp; [
-            cabal-fmt
-            cabal-install
-            ghcid
-            haskell-language-server
-            fourmolu
-            pkgs.nixpkgs-fmt
-            pkgs.treefmt
-          ];
-          project = returnShellEnv:
-            hp.developPackage {
-              inherit returnShellEnv name;
-              root = ./.;
-              withHoogle = false;
-              overrides = self: super: with pkgs.haskell.lib; {
-                ema = inputs.ema.packages.${system}.default;
-                tailwind = tailwind-haskell;
-                heist-emanote = doJailbreak (dontCheck (self.callCabal2nix "heist-emanote" inputs.heist { }));
-              };
-              modifier = drv:
-                let inherit (pkgs.haskell.lib) addBuildTools;
-                in
-                pipe drv
-                  [
-                    # Transform the Haskell derivation (`drv`) here.
-                    (flip addBuildTools
-                      (optionals returnShellEnv shellDeps))
-                  ];
-            };
-        in
-        {
-          # Used by `nix build` & `nix run`
-          defaultPackage = project false;
 
-          # Used by `nix develop`
-          devShell = project true;
-        });
+  };
+  outputs = inputs@{ self, nixpkgs, flake-parts, haskell-flake, ... }:
+    flake-parts.lib.mkFlake { inherit self; } {
+      systems = nixpkgs.lib.systems.flakeExposed;
+      imports = [
+        haskell-flake.flakeModule
+      ];
+      perSystem = { self', inputs', pkgs, ... }: {
+        # "haskellProjects" comes from https://github.com/srid/haskell-flake
+        haskellProjects.default = {
+          root = ./.;
+          buildTools = hp: {
+            inherit (pkgs)
+              treefmt
+              nixpkgs-fmt
+              foreman;
+            inherit (hp)
+              cabal-fmt
+              fourmolu;
+            inherit (inputs'.tailwind-haskell.packages)
+              tailwind;
+          };
+          source-overrides = {
+            inherit (inputs)
+              ema heist-emanote;
+          };
+          overrides = self: super: with pkgs.haskell.lib; {
+            inherit (inputs'.tailwind-haskell.packages)
+              tailwind;
+            heist-emanote = doJailbreak (dontCheck super.heist-emanote);
+          };
+        };
+      };
+    };
 }

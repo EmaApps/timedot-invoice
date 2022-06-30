@@ -12,15 +12,9 @@ import Data.Map.Syntax ((##))
 import Data.Time (UTCTime (utctDay), getCurrentTime)
 import Data.Time.Calendar (Day)
 import Data.Yaml qualified as Yaml
-import Ema (
-  Asset (AssetGenerated),
-  Dynamic (Dynamic),
-  EmaSite (..),
-  Format (Html),
-  IsRoute,
-  SingleModelRoute (SingleModelRoute),
- )
+import Ema
 import Ema qualified
+import Ema.Route.Generic
 import GHC.IO (unsafePerformIO)
 import Generics.SOP qualified as SOP
 import Heist qualified as H
@@ -38,19 +32,12 @@ import TI.HLedger qualified as HLedger
 import TI.Heist qualified as H
 import TI.Matrix qualified as M
 
-{- | The "index.html" route.
-
- Route types are the lynchpin of Ema apps, thus we need this sophisticated type
- even if our site will generate a single HTML file.
--}
+-- | The "index.html" route.
 data Route = Route_Index
-  deriving stock
-    (Show, Eq, Ord, Generic)
-  deriving anyclass
-    (SOP.Generic, SOP.HasDatatypeInfo)
-  deriving
-    (IsRoute)
-    via (SingleModelRoute Model Route)
+  deriving stock (Eq, Show, Ord, Generic)
+  deriving anyclass (SOP.Generic, SOP.HasDatatypeInfo)
+  deriving (HasSubRoutes) via (Route `WithSubRoutes` '[FileRoute "index.html"])
+  deriving (HasSubModels, IsRoute) via (Route `WithModel` Model)
 
 -- | All the data required to generate our "index.html" file
 data Model = Model
@@ -95,7 +82,7 @@ filePatternsToWatch timedotFile =
 -}
 instance EmaSite Route where
   type SiteArg Route = Arg
-  siteInput _ _ Arg {..} = do
+  siteInput _ Arg {..} = do
     model0 <- liftIO emptyModel
     -- We use the unionmount library to map the filesystem to in-memory `Model`,
     -- and update it over file as the files change. This abstraction is wrapped
@@ -129,7 +116,7 @@ instance EmaSite Route where
             UM.Delete -> do
               putStrLn $ "WARNING: YAML file gone: " <> fp
               pure $ \m -> m {modelVars = Aeson.Null}
-  siteOutput _ m Route_Index =
+  siteOutput _ m _ =
     -- We use Heist templates for HTML. Here we define the variables required to
     -- render that template. cf. https://srid.ca/heist-start
     Ema.AssetGenerated Ema.Html . renderTpl (modelTemplateState m) $ do
