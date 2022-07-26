@@ -2,6 +2,7 @@
 {-# LANGUAGE ApplicativeDo #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Main where
@@ -13,10 +14,8 @@ import Data.Time (UTCTime (utctDay), getCurrentTime)
 import Data.Time.Calendar (Day)
 import Data.Yaml qualified as Yaml
 import Ema
-import Ema qualified
-import Ema.Route.Generic
+import Ema.Route.Generic.TH
 import GHC.IO (unsafePerformIO)
-import Generics.SOP qualified as SOP
 import Heist qualified as H
 import Heist.Interpreted qualified as HI
 import Heist.Splices.Apply qualified as HA
@@ -32,13 +31,6 @@ import TI.HLedger qualified as HLedger
 import TI.Heist qualified as H
 import TI.Matrix qualified as M
 
--- | The "index.html" route.
-data Route = Route_Index
-  deriving stock (Eq, Show, Ord, Generic)
-  deriving anyclass (SOP.Generic, SOP.HasDatatypeInfo)
-  deriving (HasSubRoutes) via (Route `WithSubRoutes` '[FileRoute "index.html"])
-  deriving (HasSubModels, IsRoute) via (Route `WithModel` Model)
-
 -- | All the data required to generate our "index.html" file
 data Model = Model
   { modelTemplateState :: H.TemplateState
@@ -46,6 +38,13 @@ data Model = Model
   , modelHours :: HLedger.TimedotEntries
   , modelErrors :: [Text]
   }
+
+-- | The "index.html" route.
+data Route = Route_Index
+  deriving stock (Eq, Show, Ord, Generic)
+
+deriveGeneric ''Route
+deriveIsRoute ''Route [t|'[WithModel Model, WithSubRoutes '[FileRoute "index.html"]]|]
 
 -- | The empty model corresponding to the "index.html" that has no data (yet).
 emptyModel :: IO Model
