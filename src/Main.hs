@@ -10,7 +10,7 @@ module Main where
 import Data.Aeson.Types qualified as Aeson
 import Data.Default (def)
 import Data.Map.Syntax ((##))
-import Data.Time (UTCTime (utctDay), getCurrentTime)
+import Data.Time (LocalTime (localDay), getCurrentTime, getCurrentTimeZone, utcToLocalTime)
 import Data.Time.Calendar (Day)
 import Data.Yaml qualified as Yaml
 import Ema
@@ -134,8 +134,8 @@ instance EmaSite Route where
       let rate :: Integer = A.lookupAeson (error "No hourly-rate in YAML") (one "hourly-rate") (modelVars m)
       M.matrixSplice "invoice:matrix" renderRow ((* fromInteger rate) . sum) matrix
     where
-      -- FIXME: Use local timezone rather than UTC
-      today = unsafePerformIO $ utctDay <$> getCurrentTime
+      tz = unsafePerformIO getCurrentTimeZone
+      today = localDay $ utcToLocalTime tz $ unsafePerformIO getCurrentTime
       renderRow :: NonEmpty Day -> Text
       renderRow days =
         -- TODO: It should be possible to customize this in .tpl
