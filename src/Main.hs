@@ -118,7 +118,7 @@ instance EmaSite Route where
   siteOutput _ m _ =
     -- We use Heist templates for HTML. Here we define the variables required to
     -- render that template. cf. https://srid.ca/heist-start
-    Ema.AssetGenerated Ema.Html . renderTpl (modelTemplateState m) $ do
+    pure . Ema.AssetGenerated Ema.Html . renderTpl (modelTemplateState m) $ do
       -- Heist helpers
       "bind" ## HB.bindImpl
       "apply" ## HA.applyImpl

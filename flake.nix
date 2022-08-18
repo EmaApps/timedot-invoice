@@ -45,6 +45,7 @@
           overrides = self: super: with pkgs.haskell.lib; {
             inherit (inputs'.tailwind-haskell.packages)
               tailwind;
+            ema = dontCheck super.ema;
             heist-emanote = doJailbreak (dontCheck super.heist-emanote);
           };
         };
