@@ -11,10 +11,6 @@
     ema.flake = false;
     tailwind-haskell.url = "github:srid/tailwind-haskell/master";
     tailwind-haskell.inputs.nixpkgs.follows = "nixpkgs";
-    heist-emanote = {
-      url = "github:srid/heist/emanote";
-      flake = false;
-    };
 
   };
   outputs = inputs@{ self, nixpkgs, flake-parts, haskell-flake, ... }:
@@ -40,13 +36,13 @@
           };
           source-overrides = {
             inherit (inputs)
-              ema heist-emanote;
+              ema;
           };
           overrides = self: super: with pkgs.haskell.lib; {
             inherit (inputs'.tailwind-haskell.packages)
               tailwind;
             ema = dontCheck super.ema;
-            heist-emanote = doJailbreak (dontCheck super.heist-emanote);
+            heist-emanote = doJailbreak (dontCheck (unmarkBroken super.heist-emanote));
           };
         };
       };
