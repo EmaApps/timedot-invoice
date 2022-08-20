@@ -15,7 +15,6 @@ import Data.Time.Calendar (Day)
 import Data.Yaml qualified as Yaml
 import Ema
 import Ema.Route.Generic.TH
-import GHC.IO (unsafePerformIO)
 import Heist qualified as H
 import Heist.Interpreted qualified as HI
 import Heist.Splices.Apply qualified as HA
@@ -115,7 +114,9 @@ instance EmaSite Route where
             UM.Delete -> do
               putStrLn $ "WARNING: YAML file gone: " <> fp
               pure $ \m -> m {modelVars = Aeson.Null}
-  siteOutput _ m _ =
+  siteOutput _ m _ = do
+    tz <- liftIO getCurrentTimeZone
+    today <- localDay . utcToLocalTime tz <$> liftIO getCurrentTime
     -- We use Heist templates for HTML. Here we define the variables required to
     -- render that template. cf. https://srid.ca/heist-start
     pure . Ema.AssetGenerated Ema.Html . renderTpl (modelTemplateState m) $ do
@@ -134,8 +135,6 @@ instance EmaSite Route where
       let rate :: Integer = A.lookupAeson (error "No hourly-rate in YAML") (one "hourly-rate") (modelVars m)
       M.matrixSplice "invoice:matrix" renderRow ((* fromInteger rate) . sum) matrix
     where
-      tz = unsafePerformIO getCurrentTimeZone
-      today = localDay $ utcToLocalTime tz $ unsafePerformIO getCurrentTime
       renderRow :: NonEmpty Day -> Text
       renderRow days =
         -- TODO: It should be possible to customize this in .tpl
