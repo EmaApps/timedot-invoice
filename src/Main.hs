@@ -10,6 +10,7 @@ module Main where
 import Data.Aeson.Types qualified as Aeson
 import Data.Default (def)
 import Data.Map.Syntax ((##))
+import Data.Text qualified as T
 import Data.Time (LocalTime (localDay), getCurrentTime, getCurrentTimeZone, utcToLocalTime)
 import Data.Time.Calendar (Day)
 import Data.Yaml qualified as Yaml
@@ -130,11 +131,13 @@ instance EmaSite Route where
       "invoice:errors" ## H.listSplice (modelErrors m) "error" $ \err -> "error:err" ## HI.textSplice err
       let matrix = M.matrixFromMap $ modelHours m
       "invoice:clients" ## H.listSplice (M.matrixCols matrix) "invoice:each-client" $ \client ->
-        "invoice:client" ## HI.textSplice (toText . toString $ client)
+        "invoice:client" ## HI.textSplice (stripPrefixIf "hours:" . toText . toString $ client)
       -- TODO: proper error reporting
       let rate :: Integer = A.lookupAeson (error "No hourly-rate in YAML") (one "hourly-rate") (modelVars m)
       M.matrixSplice "invoice:matrix" renderRow ((* fromInteger rate) . sum) matrix
     where
+      stripPrefixIf suf x =
+        fromMaybe x $ T.stripPrefix suf x
       renderRow :: NonEmpty Day -> Text
       renderRow days =
         -- TODO: It should be possible to customize this in .tpl
