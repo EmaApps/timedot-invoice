@@ -33,6 +33,7 @@ executable timedot-invoice
     , filepattern
     , generics-sop
     , heist-emanote         >=1.2.1
+    , heist-extra
     , hledger
     , hledger-lib
     , lens
@@ -56,7 +57,6 @@ executable timedot-invoice
     , unliftio
     , uuid
     , with-utf8
-    , xmlhtml
     , yaml
 
   mixins:
@@ -113,7 +113,6 @@ executable timedot-invoice
   main-is:            Main.hs
   other-modules:
     TI.Aeson
-    TI.Heist
     TI.HLedger
     TI.Matrix
 

@@ -17,6 +17,8 @@ import Data.Yaml qualified as Yaml
 import Ema
 import Ema.Route.Generic.TH
 import Heist qualified as H
+import Heist.Extra.Splices.List qualified as H
+import Heist.Extra.TemplateState qualified as H
 import Heist.Interpreted qualified as HI
 import Heist.Splices.Apply qualified as HA
 import Heist.Splices.Bind qualified as HB
@@ -28,7 +30,6 @@ import System.FilePattern (FilePattern)
 import System.UnionMount qualified as UM
 import TI.Aeson qualified as A
 import TI.HLedger qualified as HLedger
-import TI.Heist qualified as H
 import TI.Matrix qualified as M
 
 -- | All the data required to generate our "index.html" file

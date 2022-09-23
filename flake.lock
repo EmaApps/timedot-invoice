@@ -68,6 +68,22 @@
         "type": "github"
       }
     },
+    "heist-extra": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1663964304,
+        "narHash": "sha256-hPZ5huMhVBM/TCeVyHnwFvjV8JIY/88juGVjqcQD7uU=",
+        "owner": "srid",
+        "repo": "heist-extra",
+        "rev": "d2f0910e5b563b7ecacb170133db242e340d9f47",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "heist-extra",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1660936389,
@@ -89,6 +105,7 @@
         "ema": "ema",
         "flake-parts": "flake-parts",
         "haskell-flake": "haskell-flake",
+        "heist-extra": "heist-extra",
         "nixpkgs": "nixpkgs",
         "tailwind-haskell": "tailwind-haskell"
       }

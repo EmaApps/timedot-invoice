@@ -2,8 +2,8 @@ module TI.Matrix where
 
 import Data.Map.Strict qualified as Map
 import Data.Map.Syntax (MapSyntax, (##))
+import Heist.Extra.Splices.List qualified as H
 import Heist.Interpreted qualified as HI
-import TI.Heist qualified as H
 
 -- | A (partial) matrix with not all cells necessarily filled.
 data Matrix r c a = Matrix
