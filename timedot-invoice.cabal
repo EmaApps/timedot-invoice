@@ -28,12 +28,13 @@ executable timedot-invoice
     , containers
     , data-default
     , directory
-    , ema                   >=0.7
+    , ema                   >=0.10
+    , ema-generics
     , filepath
     , filepattern
     , generics-sop
-    , heist-emanote         >=1.2.1
-    , heist-extra
+    , heist                 >=1.1.1.0
+    , heist-extra           >=0.2.0.0
     , hledger
     , hledger-lib
     , lens
