@@ -19,7 +19,7 @@
       imports = [
         haskell-flake.flakeModule
       ];
-      perSystem = { self', inputs', pkgs, ... }: {
+      perSystem = { self', config, inputs', pkgs, ... }: {
         # "haskellProjects" comes from https://github.com/srid/haskell-flake
         haskellProjects.default = {
           packages.timedot-invoice.root = ./.;
@@ -43,6 +43,7 @@
             heist = dontCheck super.heist; # Tests are broken.
           };
         };
+        packages.default = config.packages.timedot-invoice;
       };
     };
 }
